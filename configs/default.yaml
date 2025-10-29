@@ -1,0 +1,11 @@
+runner_url: "dryrun://runner"
+llm:
+  provider: "openai"
+  model: "gpt-4o-mini"
+  decoding:
+    temperature: 0.2
+    top_p: 0.95
+budgets:
+  max_iterations: 2
+targets:
+  coverage: 60.0

@@ -1,0 +1,6 @@
+__pycache__/
+.artifacts/
+artifacts/
+.venv/
+.mypy_cache/
+.pytest_cache/
