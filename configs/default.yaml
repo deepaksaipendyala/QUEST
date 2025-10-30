@@ -1,4 +1,4 @@
-runner_url: "dryrun://runner"
+runner_url: "http://localhost:3000/runner"
 llm:
   provider: "openai"
   model: "gpt-4o-mini"

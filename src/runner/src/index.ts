@@ -2,6 +2,8 @@ const server = Bun.serve({
   port: 3000,
   fetch(req) {
     const url = new URL(req.url);
+
+    console.log(`REQ: ${req.method} ${url.pathname}`);
     
     if (url.pathname === "/") {
       return new Response("Hello from Bun HTTP Server!", {
