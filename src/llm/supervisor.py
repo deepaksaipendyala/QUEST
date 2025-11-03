@@ -11,15 +11,25 @@ def _extract_missing_lines(payload: Dict) -> List[int]:
         return []
     return [int(x) for x in missing if isinstance(x, int)]
 
+def _as_float(value: object, default: float) -> float:
+    if isinstance(value, (int, float)):
+        return float(value)
+    if isinstance(value, str):
+        try:
+            return float(value)
+        except ValueError:
+            return default
+    return default
+
 def analyze(payload: Dict, target_coverage: float) -> Critique:
     status = str(payload.get("status", "error"))
     success = bool(payload.get("success", False))
-    coverage = float(payload.get("coverage", 0.0))
+    coverage = _as_float(payload.get("coverage"), 0.0)
     missing_lines = _extract_missing_lines(payload)
 
     compile_error = not success and status == "error"
     no_tests = status == "no_tests_collected"
-    low_coverage = coverage < float(target_coverage)
+    low_coverage = coverage < _as_float(target_coverage, 0.0)
 
     instructions: List[str] = []
     if compile_error:
