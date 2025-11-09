@@ -173,6 +173,14 @@ curl --location 'http://localhost:3000/lint' \
   "version": "0.24.0",
   "test_src": "import httpx\n\n\ndef test_client_creation():\n    client = httpx.Client()\n    assert client is not None\n"
 }'
+
+curl --location 'http://localhost:3000/lint' \
+--header 'Content-Type: application/json' \
+--data '{
+  "repo": "encode/httpx",
+  "version": "0.24.0",
+  "test_src": "import httpx\nimport sys\n\ndef test_client_creation():\n    client = httpx.Client()\n    assert client is not None\n"
+}'
 ```
 
 ## Features
