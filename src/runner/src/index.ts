@@ -138,12 +138,11 @@ async function setupRepo(repo: string, version: string): Promise<string> {
         console.log(`Using ${pythonCmd} for virtual environment...`);
         
         await Bun.spawn([
-            pythonCmd, "-m", "venv", "venv"
+            pythonCmd, "-m", "venv", ".venv"
         ], { cwd: repoPath, stderr: "pipe", stdout: "pipe" }).exited;
 
-        const venvPip = `${repoPath}/venv/bin/pip`;
-        const venvPython = `${repoPath}/venv/bin/python`;
-
+        const venvPip = `${repoPath}/.venv/bin/pip`;
+        const venvPython = `${repoPath}/.venv/bin/python`;
         // Install dependencies
         console.log(`Installing dependencies...`);
         
@@ -222,7 +221,7 @@ async function runLint(repoPath: string, test_src: string) {
     console.log(`Linting test source in ${repoPath}...`);
 
     const startTime = Date.now();
-    const venvPython = `${repoPath}/venv/bin/python`;
+    const venvPython = `${repoPath}/.venv/bin/python`;
     const lintFileName = `temp_lint_${Date.now()}.py`;
     const lintFilePath = `${repoPath}/${lintFileName}`;
 
@@ -304,7 +303,7 @@ async function runTest(repoPath: string, test_src: string, code_file: string) {
     console.log(`Running test in ${repoPath}...`);
     
     try {
-        const venvPython = `${repoPath}/venv/bin/python`;
+        const venvPython = `${repoPath}/.venv/bin/python`;
         
         // Create a temporary test file
         const testFileName = `temp_test_${Date.now()}.py`;
