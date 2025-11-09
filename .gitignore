@@ -4,4 +4,5 @@ artifacts/
 .venv/
 .mypy_cache/
 .pytest_cache/
-*.egg-infoexternal/testgeneval/
+*.egg-info
+external/testgeneval/
