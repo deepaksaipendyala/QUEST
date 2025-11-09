@@ -18,6 +18,10 @@ const server = Bun.serve({
       });
     }
 
+    if (url.pathname === '/lint' && req.method === 'POST') {
+        return handleLintRequest(req);
+    }
+
     if (url.pathname === '/runner' && req.method === 'POST') {
         return handleRunnerRequest(req);
     }
@@ -27,6 +31,31 @@ const server = Bun.serve({
 });
 
 console.log(`🚀 Server running at http://localhost:${server.port}`);
+
+async function handleLintRequest(req: Request): Promise<Response> {
+    const requestBody = await req.json() as Record<string, any>;
+    const { repo, version, test_src } = requestBody;
+
+    if (!repo || !version) {
+        return Response.json({
+            status: "error",
+            success: false,
+            error: "repo and version parameters are required"
+        }, { status: 400 });
+    }
+
+    if (typeof test_src !== "string" || test_src.trim().length === 0) {
+        return Response.json({
+            status: "error",
+            success: false,
+            error: "test_src must be a non-empty string"
+        }, { status: 400 });
+    }
+
+    const repoPath = await setupRepo(repo, version);
+
+    return Response.json(await runLint(repoPath, test_src));
+}
 
 async function handleRunnerRequest(req: Request): Promise<Response> {
     const requestBody = await req.json() as Record<string, any>;
@@ -92,14 +121,14 @@ async function setupRepo(repo: string, version: string): Promise<string> {
         // Create virtual environment using Python 3.11 (more compatible with older packages)
         // Try python3.11 first, fall back to python3.10, then python3
         let pythonCmd = "python3.11";
-        const checkPython = Bun.spawn(["which", pythonCmd], { stderr: "pipe", stdout: "pipe" });
-        const pythonExists = await checkPython.exited === 0;
+    const checkPython = Bun.spawn(["which", pythonCmd], { stderr: "pipe", stdout: "pipe" });
+    const pythonExists = (await checkPython.exited) === 0;
         
         if (!pythonExists) {
             console.log("Python 3.11 not found, trying python3.10...");
             pythonCmd = "python3.10";
             const checkPython10 = Bun.spawn(["which", pythonCmd], { stderr: "pipe", stdout: "pipe" });
-            const python10Exists = await checkPython10.exited === 0;
+            const python10Exists = (await checkPython10.exited) === 0;
             if (!python10Exists) {
                 console.log("Python 3.10 not found, using default python3 (may cause compatibility issues)");
                 pythonCmd = "python3";
@@ -163,17 +192,21 @@ async function setupRepo(repo: string, version: string): Promise<string> {
             console.log(`✓ Installed package in editable mode`);
         }
         
-        // Install pytest and coverage tools AFTER package dependencies
-        const pytestInstall = Bun.spawn([
-            venvPip, "install", "pytest", "pytest-cov", "coverage"
+        // Install test and lint tooling AFTER package dependencies
+        const toolingInstall = Bun.spawn([
+            venvPip,
+            "install",
+            "pytest",
+            "coverage",
+            "ruff"
         ], { cwd: repoPath, stderr: "pipe", stdout: "pipe" });
         
-        const pytestResult = await pytestInstall.exited;
-        if (pytestResult !== 0) {
-            const stderr = await new Response(pytestInstall.stderr).text();
-            console.warn(`Warning: pytest installation failed: ${stderr}`);
+        const toolingResult = await toolingInstall.exited;
+        if (toolingResult !== 0) {
+            const stderr = await new Response(toolingInstall.stderr).text();
+            console.warn(`Warning: tooling installation failed: ${stderr}`);
         } else {
-            console.log(`✓ Installed pytest, pytest-cov, and coverage`);
+            console.log(`✓ Installed pytest, coverage, and ruff`);
         }
 
         console.log(`✓ Setup complete for ${dirName}`);
@@ -183,6 +216,88 @@ async function setupRepo(repo: string, version: string): Promise<string> {
         console.error(`Error setting up repository:`, error);
         throw error;
     }
+}
+
+async function runLint(repoPath: string, test_src: string) {
+    console.log(`Linting test source in ${repoPath}...`);
+
+    const startTime = Date.now();
+    const venvPython = `${repoPath}/venv/bin/python`;
+    const lintFileName = `temp_lint_${Date.now()}.py`;
+    const lintFilePath = `${repoPath}/${lintFileName}`;
+
+    await Bun.write(lintFilePath, test_src);
+    console.log(`✓ Created lint file: ${lintFileName}`);
+
+    const lintProc = Bun.spawn([
+        venvPython,
+        "-m",
+        "ruff",
+        "check",
+        "--format=json",
+        lintFileName,
+    ], {
+        cwd: repoPath,
+        stderr: "pipe",
+        stdout: "pipe",
+    });
+
+    const exitCode = await lintProc.exited;
+    const stdout = await new Response(lintProc.stdout).text();
+    const stderr = await new Response(lintProc.stderr).text();
+    const executionTime = (Date.now() - startTime) / 1000;
+
+    let issues: any[] | null = null;
+    let issueCount: number | null = null;
+    let parseError: string | undefined;
+
+    if (stdout.trim().length > 0) {
+        try {
+            const parsed = JSON.parse(stdout);
+            if (Array.isArray(parsed)) {
+                issues = parsed;
+                issueCount = parsed.length;
+            } else {
+                parseError = "Unexpected lint output format";
+            }
+        } catch (error) {
+            parseError = `Failed to parse lint output: ${error}`;
+        }
+    }
+
+    try {
+        await Bun.spawn(["rm", lintFilePath]).exited;
+    } catch (cleanupError) {
+        console.warn(`Failed to remove lint file ${lintFileName}: ${cleanupError}`);
+    }
+
+    const success = exitCode === 0;
+    const status = success ? "clean" : exitCode === 1 ? "violations" : "error";
+
+    if (success && issues === null) {
+        issues = [];
+        issueCount = 0;
+    }
+
+    const response: Record<string, unknown> = {
+        status,
+        success,
+        exitCode,
+        executionTime,
+        issueCount,
+        issues,
+        stdout,
+        stderr,
+        repoPath
+    };
+
+    if (parseError) {
+        response.parseError = parseError;
+    }
+
+    console.log(`✓ Lint execution ${status} (${executionTime.toFixed(2)}s)`);
+
+    return response;
 }
 
 async function runTest(repoPath: string, test_src: string, code_file: string) {
@@ -198,9 +313,6 @@ async function runTest(repoPath: string, test_src: string, code_file: string) {
         // Write the test source code to a file
         await Bun.write(testFilePath, test_src);
         console.log(`✓ Created test file: ${testFileName}`);
-        
-        // Construct the full path to the code file for coverage
-        const fullCodePath = `${repoPath}/${code_file}`;
         
         // Run pytest with coverage on the test file
         const startTime = Date.now();
