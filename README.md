@@ -66,3 +66,28 @@ python -m src.orchestrator.engine --repo encode/httpx --version 0.24.0 --code-fi
 
 Context miner reads the local file (default --repo-root=.) to build a compact ContextPack passed to the Generator.
 Artifacts per attempt are in artifacts/runs/<run_id>/.
+
+## TestGenEval Integration
+- Clone the dataset locally (kept out of version control):
+  ```
+  mkdir -p external
+  git clone https://github.com/facebookresearch/testgeneval.git external/testgeneval
+  ```
+- Start the Bun Runner in another terminal (`src/runner`):
+  ```
+  bun install
+  bun run start
+  ```
+- Run the orchestrator against a TestGenEval task (example target):
+  ```
+  export RUNNER_URL="http://localhost:3000/runner"
+  export OPENAI_API_KEY="sk-..."; unset DRY_LLM
+  python -m src.orchestrator.engine \
+      --repo encode/httpx \
+      --version 0.24.0 \
+      --code-file httpx/_client.py \
+      --repo-root ./external/testgeneval/repos/encode__httpx__0.24.0 \
+      --max-iters 2
+  ```
+- Inspect Runner responses and critiques in `artifacts/runs/<run_id>/`.
+  (`external/testgeneval/` is ignored by git; everyone clones it locally.)

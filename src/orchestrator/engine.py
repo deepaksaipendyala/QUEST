@@ -50,7 +50,8 @@ def main() -> None:
     critique0: Dict = send(sup, sup_payload, cfg)
     write_json(out / "attempt_0.critique.json", critique0)
 
-    cov = float(resp0.get("coverage", 0.0))
+    cov_raw0 = resp0.get("coverage", 0.0)
+    cov = float(cov_raw0) if isinstance(cov_raw0, (int, float, str)) and cov_raw0 != "" else 0.0
     append_event(events_log, f"run={run_id} attempt=0 state=RUN status={resp0['status']} cov={cov:.2f}")
 
     if cov >= target_cov:
@@ -82,7 +83,8 @@ def main() -> None:
         resp = post_runner(cfg.runner_url, next_req)
         write_json(out / f"attempt_{k}.response.json", resp)
 
-        cov = float(resp.get("coverage", 0.0))
+        cov_raw = resp.get("coverage", 0.0)
+        cov = float(cov_raw) if isinstance(cov_raw, (int, float, str)) and cov_raw != "" else 0.0
         append_event(events_log, f"run={run_id} attempt={k} state=RUN status={resp['status']} cov={cov:.2f}")
         if cov >= target_cov:
             print(f"[{run_id}] coverage={cov:.2f}% target met in attempt {k}")
