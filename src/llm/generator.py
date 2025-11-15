@@ -4,6 +4,22 @@ from src.core.types import RunnerRequest
 
 
 def generate_minimal_request(repo: str, version: str, code_file: str) -> RunnerRequest:
-    # Deterministic, trivially valid pytest module just to exercise the Runner.
-    test_src = "import httpx\n\ndef test_client_creation():\n    client = httpx.Client()\n    assert client is not None\n\ndef test_async_client():\n    client = httpx.AsyncClient()\n    assert client is not None\n"
+    test_src = """import unittest
+import time
+from django.views.static import was_modified_since
+
+
+class StaticUtilsTests(unittest.TestCase):
+    def test_was_modified_since_not_modified(self):
+        \"""
+        When the If-Modified-Since header matches the mtime and size,
+        was_modified_since() should return False.
+        \"""
+        mtime = int(time.time())
+        header = time.strftime("%a, %d %b %Y %H:%M:%S GMT", time.gmtime(mtime))
+
+        # When header time == mtime and size matches, should return False.
+        self.assertFalse(was_modified_since(f"{header}; length=10", mtime, 10))
+"""
+
     return {"repo": repo, "version": version, "code_file": code_file, "test_src": test_src}

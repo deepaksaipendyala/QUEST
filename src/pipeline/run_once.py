@@ -6,6 +6,7 @@ from src.core.storage import new_run_id, run_dir, write_json, write_text
 from src.core.sandbox_client import post_runner
 from src.llm.generator import generate_minimal_request
 
+
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--repo", required=True)
@@ -22,6 +23,7 @@ def main() -> None:
     if os.getenv("ENABLE_VALIDATION", "0") == "1":
         # Import inside the guarded block so environments without pydantic still work.
         from src.core.schema import RunnerRequestModel  # type: ignore
+
         RunnerRequestModel(**request_dict)
 
     write_json(out / "request.json", request_dict)
@@ -31,12 +33,17 @@ def main() -> None:
 
     if os.getenv("ENABLE_VALIDATION", "0") == "1":
         from src.core.schema import RunnerResponseModel  # type: ignore
+
         RunnerResponseModel(**resp)
 
     write_json(out / "response.json", resp)
 
     cov = resp.get("coverage", 0.0)
+    # dont print the stdout field since its large
+    resp.pop("stdout", None)
+    print(resp)
     print(f"[{run_id}] status={resp['status']} success={resp['success']} coverage={cov:.2f}%")
+
 
 if __name__ == "__main__":
     main()

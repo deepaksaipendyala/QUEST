@@ -4,7 +4,7 @@ Minimal pipeline that generates a pytest module, sends it to an external Runner 
 ## Quick start
 1) `pip install -e .` (or `pip install -r requirements.txt` if you export one)
 2) Ensure Runner is available at `$RUNNER_URL` (default `http://localhost:3000/runner`)
-3) `python -m src.pipeline.run_once --repo encode/httpx --version 0.24.0 --code-file httpx/_client.py`
+3) `python -m src.pipeline.run_once --repo django/django --version 4.1 --code-file django/views/static.py`
 
 Artifacts and metrics land in `artifacts/runs/<run_id>/`.
 
@@ -27,14 +27,14 @@ unset DRY_LLM    # ensure LLM usage is enabled
 
 Run iterate with OpenAI:
 ```
-python -m src.pipeline.iterate --repo encode/httpx --version 0.24.0 --code-file httpx/_client.py --max-iters 2
+python -m src.pipeline.iterate --repo django/django --version 4.1 --code-file django/views/static.py --max-iters 2
 ```
 
 Offline fallback (no network):
 ```
 export DRY_RUN=1
 export DRY_LLM=1
-python -m src.pipeline.iterate --repo encode/httpx --version 0.24.0 --code-file httpx/_client.py --max-iters 2
+python -m src.pipeline.iterate --repo django/django --version 4.1 --code-file django/views/static.py --max-iters 2
 ```
 
 ## Quick checks
@@ -42,11 +42,11 @@ python -m src.pipeline.iterate --repo encode/httpx --version 0.24.0 --code-file 
 # OpenAI path
 pip install openai
 export OPENAI_API_KEY="sk-..."; unset DRY_LLM
-python -m src.pipeline.iterate --repo encode/httpx --version 0.24.0 --code-file httpx/_client.py --max-iters 1
+python -m src.pipeline.iterate --repo django/django --version 4.1 --code-file django/views/static.py --max-iters 1
 
 # Offline path
 export DRY_RUN=1; export DRY_LLM=1
-python -m src.pipeline.iterate --repo encode/httpx --version 0.24.0 --code-file httpx/_client.py --max-iters 1
+python -m src.pipeline.iterate --repo django/django --version 4.1 --code-file django/views/static.py --max-iters 1
 ```
 
 ## Orchestrator (v2 backbone)
@@ -54,14 +54,14 @@ Offline (synthetic Runner + rule-based LLM):
 ```
 export DRY_RUN=1
 export DRY_LLM=1
-python -m src.orchestrator.engine --repo encode/httpx --version 0.24.0 --code-file httpx/_client.py --max-iters 2
+python -m src.orchestrator.engine --repo django/django --version 4.1 --code-file django/views/static.py --max-iters 2
 ```
 
 With OpenAI:
 ```
 pip install openai
 export OPENAI_API_KEY="sk-..."; unset DRY_LLM
-python -m src.orchestrator.engine --repo encode/httpx --version 0.24.0 --code-file httpx/_client.py --max-iters 2
+python -m src.orchestrator.engine --repo django/django --version 4.1 --code-file django/views/static.py --max-iters 2
 ```
 
 Context miner reads the local file (default --repo-root=.) to build a compact ContextPack passed to the Generator.
@@ -83,10 +83,10 @@ Artifacts per attempt are in artifacts/runs/<run_id>/.
   export RUNNER_URL="http://localhost:3000/runner"
   export OPENAI_API_KEY="sk-..."; unset DRY_LLM
   python -m src.orchestrator.engine \
-      --repo encode/httpx \
-      --version 0.24.0 \
-      --code-file httpx/_client.py \
-      --repo-root ./external/testgeneval/repos/encode__httpx__0.24.0 \
+      --repo django/django \
+      --version 4.1 \
+      --code-file django/views/static.py \
+      --repo-root ./external/testgeneval/repos/encode__httpx__4.1 \
       --max-iters 2
   ```
 - Inspect Runner responses and critiques in `artifacts/runs/<run_id>/`.

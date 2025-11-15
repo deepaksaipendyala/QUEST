@@ -25,3 +25,12 @@ PYTHONPATH="$PWD/gitrepo:$PYTHONPATH" \
 SWEBENCH_DOCKER_FORK_DIR="$PWD/gitrepo" \
 conda run -n testgeneval python test.py
 ```
+
+
+## To run the server
+- Navigate to src/runner then run:
+```bash
+PYTHONPATH="$PWD/gitrepo:$PYTHONPATH" \
+SWEBENCH_DOCKER_FORK_DIR="$PWD/gitrepo" \
+conda run -n testgeneval python server.py
+```
