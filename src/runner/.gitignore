@@ -1,10 +1,2 @@
-# Bun
-node_modules
-.env
-.env.*
-!.env.example
-bun.lockb
-
-# OS
-.DS_Store
 *.log
+gitrepo/
