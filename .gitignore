@@ -1,0 +1,10 @@
+__pycache__/
+.artifacts/
+artifacts/
+.venv/
+.mypy_cache/
+.pytest_cache/
+*.egg-info
+external/testgeneval/
+supplemental_materials/
+.env

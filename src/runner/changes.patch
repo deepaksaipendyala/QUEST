@@ -1,0 +1,150 @@
+diff --git a/swebench_docker/context_manager.py b/swebench_docker/context_manager.py
+index 067dda2..c33eace 100644
+--- a/swebench_docker/context_manager.py
++++ b/swebench_docker/context_manager.py
+@@ -44,6 +44,8 @@ class LogWrapper:
+         self.prefix = prefix
+ 
+     def write(self, message: str, mode: str = "a", level: int = INFO):
++        # Ensure the log directory exists before attempting to write.
++        os.makedirs(os.path.dirname(self.log_file), exist_ok=True)
+         with open(self.log_file, mode) as f:
+             log = (
+                 f"{self.prefix} {message} \n"
+@@ -147,6 +149,8 @@ class TaskEnvContextManager:
+             logger=self.log,
+         )
+ 
++        self.skip_dataset_patch = os.getenv("SKIP_DATASET_PATCH") == "True"
++
+     def add_coverage_tox(self, config_file):
+         # Create a ConfigParser object
+         config = configparser.ConfigParser()
+@@ -249,6 +253,21 @@ class TaskEnvContextManager:
+         Returns:
+             bool: True if patch applied successfully, False otherwise
+         """
++        if isinstance(patch_type, PatchType):
++            patch_type = patch_type.value
++
++        if (
++            self.skip_dataset_patch
++            and not revert
++            and patch_type in {PatchType.PATCH_GOLD.value, PatchType.PATCH_TEST.value}
++        ):
++            self.log.write(
++                f"Skipping {patch_type} patch because SKIP_DATASET_PATCH is set"
++            )
++            with open(self.log_file, "a") as f:
++                f.write(f"{APPLY_PATCH_PASS} ({patch_type})\n")
++            return True
++
+         init_diff_patch_path = os.path.join(
+             os.path.dirname(self.repo_dir.rstrip("/")),
+             f"temp_{self.instance_id}_{patch_type}_init.patch",
+@@ -537,6 +556,10 @@ class TaskEnvContextManager:
+             if log_data:
+                 # Write pass/fail status to log file
+                 if out_test.returncode != 0:
++                    # Include captured subprocess output so failures are debuggable.
++                    self.log.write("Test command output (stdout/stderr combined):")
++                    combined_output = out_test.stdout or "<no output captured>"
++                    self.log.write(combined_output.strip(), level=ERROR)
+                     self.log.write(f"\n{TESTS_FAILED}\n")
+                 else:
+                     self.log.write(f"\n{TESTS_PASSED}\n")
+diff --git a/swebench_docker/evaluate_instance.py b/swebench_docker/evaluate_instance.py
+index ea357df..26ff298 100644
+--- a/swebench_docker/evaluate_instance.py
++++ b/swebench_docker/evaluate_instance.py
+@@ -246,6 +246,21 @@ def postprocess_functions(
+ 
+ def full_processing(prompt_list, tcm, task_instance, skip_mutation):
+     for prompt in prompt_list:
++        if getattr(tcm, "skip_dataset_patch", False):
++            tcm.log.write(f"{TESTS_CONFIG}full pred\n")
++            with open(task_instance[KEY_TEST_FILE_PATH], "w") as f:
++                f.write(prompt)
++
++            _, success = tcm.run_tests_task(
++                task_instance, skip_mutation=skip_mutation
++            )
++
++            if success:
++                tcm.log.write(UNFILTERED_TESTS_PASSED)
++            else:
++                tcm.log.write(UNFILTERED_TESTS_FAILED)
++            continue
++
+         preamble, classes, test_functions = extract_preamble_classes_and_functions(
+             prompt, tcm
+         )
+@@ -295,9 +310,21 @@ def full_processing(prompt_list, tcm, task_instance, skip_mutation):
+             else:
+                 tcm.log.write(UNFILTERED_TESTS_FAILED)
+         else:
+-            tcm.log.write("TestsTime: 0.0")
+-            tcm.log.write(TESTS_FAILED)
+-            tcm.log.write(UNFILTERED_TESTS_FAILED)
++            # Fallback: if we could not parse individual tests, execute the
++            # provided prompt verbatim so failures emit their stdout/stderr.
++            tcm.log.write(
++                "Parser found no standalone tests; running prompt verbatim.",
++            )
++            with open(task_instance[KEY_TEST_FILE_PATH], "w") as f:
++                f.write(prompt)
++
++            _, success = tcm.run_tests_task(
++                task_instance, skip_mutation=skip_mutation
++            )
++            if success:
++                tcm.log.write(UNFILTERED_TESTS_PASSED)
++            else:
++                tcm.log.write(UNFILTERED_TESTS_FAILED)
+ 
+ 
+ def completion_processing(
+diff --git a/swebench_docker/run_docker.py b/swebench_docker/run_docker.py
+index 635c706..b89a197 100644
+--- a/swebench_docker/run_docker.py
++++ b/swebench_docker/run_docker.py
+@@ -30,6 +30,7 @@ async def run_docker_evaluation(
+     base64_instance: bool = True,
+     only_baseline: bool = False,
+     skip_mutation: bool = False,
++    skip_dataset_patch: bool = False,
+ ):
+     repo_name = task_instance["repo"].replace("/", "_")
+ 
+@@ -92,8 +93,10 @@ async def run_docker_evaluation(
+             f"ONLY_BASELINE={only_baseline}",
+             "-e",
+             f"SKIP_MUTATION={skip_mutation}",
+-            docker_image,
+         ]
++        if skip_dataset_patch:
++            docker_command.extend(["-e", "SKIP_DATASET_PATCH=True"])
++        docker_command.append(docker_image)
+     else:
+         # Base64 encode the instance JSON to be sure it can be passed as an environment variable
+         instance_b64 = base64.b64encode(
+@@ -105,7 +108,6 @@ async def run_docker_evaluation(
+             "--rm",
+             "--network",
+             "host",
+-            "--memory_swappiness" "5",
+             "-v",
+             f"{log_dir}:{container_log_dir}",
+             "-e",
+@@ -122,8 +124,10 @@ async def run_docker_evaluation(
+             f"ONLY_BASELINE={only_baseline}",
+             "-e",
+             f"SKIP_MUTATION={skip_mutation}",
+-            docker_image,
+         ]
++        if skip_dataset_patch:
++            docker_command.extend(["-e", "SKIP_DATASET_PATCH=True"])
++        docker_command.append(docker_image)
+ 
+     cmd_string = " ".join(docker_command)
+ 

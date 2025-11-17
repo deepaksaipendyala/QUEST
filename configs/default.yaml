@@ -1,0 +1,17 @@
+runner_url: "http://localhost:3000/runner"
+runner:
+  skip_mutation: false
+llm:
+  provider: "openai"
+  model: "gpt-4o-mini"
+  decoding:
+    temperature: 0.2
+    top_p: 0.95
+  collect_logprobs: true
+static_analysis:
+  enable: true
+budgets:
+  max_iterations: 2
+targets:
+  coverage: 60.0
+  mutation: 50.0
