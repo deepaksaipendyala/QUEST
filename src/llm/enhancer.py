@@ -88,3 +88,4 @@ def enhance_with_llm(
     if candidate:
         return candidate, result
     return current, result
+

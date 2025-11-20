@@ -9,6 +9,15 @@ import subprocess
 from dataclasses import dataclass
 from typing import Any, Dict, Optional
 
+# ===========================================================
+# FIXED: DEFAULT_* CONSTANTS MUST BE DEFINED BEFORE USE
+# ===========================================================
+DEFAULT_DATASET = "kjain14/testgenevallite"
+DEFAULT_NAMESPACE = "kdjain"
+DEFAULT_RESULTS_ROOT = "results/runner"
+DEFAULT_MODEL_NAME = "custom-runner"
+# ===========================================================
+
 from gitrepo.swebench_docker.constants import (
     KEY_ID,
     KEY_INSTANCE_ID,
@@ -20,11 +29,6 @@ from gitrepo.swebench_docker.constants import (
 from gitrepo.swebench_docker.run_docker import run_docker_evaluation
 from gitrepo.swebench_docker.swebench_utils import get_logs_eval, get_test_directives
 from gitrepo.swebench_docker.utils import get_eval_refs
-
-DEFAULT_DATASET = "kjain14/testgenevallite"
-DEFAULT_NAMESPACE = "kdjain"
-DEFAULT_RESULTS_ROOT = "results/runner"
-DEFAULT_MODEL_NAME = "custom-runner"
 
 
 @dataclass
@@ -84,13 +88,15 @@ def _select_task(
             and task_dict.get("code_file") == code_file
         ):
             matches.append(task_dict)
+
     if not matches:
         raise TaskLookupError(
             f"No dataset row found for repo={repo}, version={version}, code_file={code_file}."
         )
+
     if len(matches) > 1:
-        # Prefer the first match but alert the caller so they can disambiguate later.
-        print("[runner] Warning: multiple matching tasks found; defaulting to the first entry.")
+        print("[runner] Warning: multiple matching tasks found; defaulting to first entry.")
+
     return matches[0]
 
 
@@ -107,6 +113,7 @@ def _prepare_task_instance(
     test_directives = get_test_directives(task_instance)
     task_instance["test_directives"] = test_directives
     task_instance["test_cmd"] = f"{test_type} {' '.join(test_directives)}"
+
     return task_instance
 
 
@@ -114,15 +121,16 @@ def _resolve_image(namespace: str, task_instance: Dict[str, Any]) -> str:
     repo_name = task_instance["repo"].replace("/", "_")
     specifications = MAP_VERSION_TO_INSTALL[task_instance["repo"]][task_instance["version"]]
     image_prefix = "swe-bench"
+
     if specifications.get("instance_image", False):
-        return (
-            f"{namespace}/{image_prefix}-{repo_name}-instance:" f"{task_instance[KEY_INSTANCE_ID]}"
-        )
+        return f"{namespace}/{image_prefix}-{repo_name}-instance:{task_instance[KEY_INSTANCE_ID]}"
+
     return f"{namespace}/{image_prefix}-{repo_name}-testbed:{task_instance['version']}"
 
 
 def _ensure_image(namespace: str, task_instance: Dict[str, Any]) -> str:
     image_name = _resolve_image(namespace, task_instance)
+
     inspect = subprocess.run(
         ["docker", "image", "inspect", image_name],
         stdout=subprocess.PIPE,
@@ -130,10 +138,12 @@ def _ensure_image(namespace: str, task_instance: Dict[str, Any]) -> str:
         check=False,
         text=True,
     )
+
     if inspect.returncode != 0:
         pull = subprocess.run(["docker", "pull", image_name], check=False)
         if pull.returncode != 0:
             raise RuntimeError(f"Failed to pull Docker image: {image_name}")
+
     return image_name
 
 
@@ -145,12 +155,13 @@ async def _run_evaluation_async(
     skip_mutation: bool,
     apply_dataset_patch: bool,
 ) -> None:
-    # Always overwrite the specific log file before running to avoid stale parsing.
+
     log_pattern = os.path.join(
-        log_dir, f"{task_instance[KEY_ID]}.{task_instance[KEY_MODEL]}.*.eval.log"
+        log_dir,
+        f"{task_instance[KEY_ID]}.{task_instance[KEY_MODEL]}.*.eval.log"
     )
-    for stale_log in glob.glob(log_pattern):
-        os.remove(stale_log)
+    for stale in glob.glob(log_pattern):
+        os.remove(stale)
 
     await run_docker_evaluation(
         task_instance=task_instance,
@@ -179,11 +190,11 @@ def run_custom_test(
     skip_mutation: bool = False,
     apply_dataset_patch: bool = False,
 ) -> CustomRunResult:
-    """Run a single custom full-file test inside the appropriate SWE-bench container."""
 
     dataset_refs = get_eval_refs(dataset)
     task = _select_task(dataset_refs, repo, version, code_file)
     task_instance = _prepare_task_instance(task, test_src, model_name)
+
     _ensure_image(namespace, task_instance)
 
     repo_sanitized = repo.replace("/", "__")
@@ -195,53 +206,38 @@ def run_custom_test(
         asyncio.run(
             _run_evaluation_async(
                 task_instance,
-                namespace=namespace,
-                log_dir=log_dir,
-                timeout=timeout,
-                skip_mutation=skip_mutation,
-                apply_dataset_patch=apply_dataset_patch,
+                namespace,
+                log_dir,
+                timeout,
+                skip_mutation,
+                apply_dataset_patch,
             )
         )
     except RuntimeError as exc:
         if "event loop" in str(exc):
-            raise RuntimeError(
-                "run_custom_test must be invoked from a synchronous context."
-            ) from exc
+            raise RuntimeError("run_custom_test must be called synchronously.") from exc
         raise
 
     log_path = os.path.join(
         log_dir,
-        f"{task_instance[KEY_ID]}.{task_instance[KEY_MODEL]}.full.eval.log",
+        f"{task_instance[KEY_ID]}.{task_instance[KEY_MODEL]}.full.eval.log"
     )
+
     if not os.path.exists(log_path):
-        raise RuntimeError("Evaluation did not produce a log file. Check docker output for errors.")
+        raise RuntimeError("Evaluation produced no log file. Check Docker output.")
 
     log_metrics = get_logs_eval(log_path)
-    full_metrics = log_metrics.get("full", {})
-    coverage = None
-    passed = False
-    test_error = "Unknown"
-    mutation_score = None
-    mutation_uncertainty = None
-    mutation_num = None
-    if full_metrics:
-        coverage_values = full_metrics.get("coverage", [])
-        coverage = coverage_values[0] if coverage_values else None
-        passed_values = full_metrics.get("tests_passed", [])
-        passed = passed_values[0] if passed_values else False
-        test_error_values = full_metrics.get("test_error", [])
-        test_error = test_error_values[0] if test_error_values else "Unknown"
-        mutation_score_values = full_metrics.get("mutation_score", [])
-        mutation_score = mutation_score_values[0] if mutation_score_values else None
-        mutation_uncertainty_values = full_metrics.get("mutation_uncertainty", [])
-        mutation_uncertainty = (
-            mutation_uncertainty_values[0] if mutation_uncertainty_values else None
-        )
-        mutation_num_values = full_metrics.get("mutation_num", [])
-        mutation_num = mutation_num_values[0] if mutation_num_values else None
+    full = log_metrics.get("full", {})
 
-    with open(log_path, "r", encoding="utf-8") as log_file:
-        log_text = log_file.read()
+    coverage = (full.get("coverage") or [None])[0]
+    passed = (full.get("tests_passed") or [False])[0]
+    test_error = (full.get("test_error") or ["Unknown"])[0]
+    mutation_score = (full.get("mutation_score") or [None])[0]
+    mutation_uncertainty = (full.get("mutation_uncertainty") or [None])[0]
+    mutation_num = (full.get("mutation_num") or [None])[0]
+
+    with open(log_path, "r", encoding="utf-8") as lf:
+        log_text = lf.read()
 
     baseline_cov = None
     if isinstance(task.get("baseline_covs"), dict):

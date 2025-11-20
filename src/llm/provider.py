@@ -104,6 +104,14 @@ def run_completion(prompt: str, cfg: LLMConfig) -> LLMResult:
         top_p=cfg.top_p,
         **extra_args,
     )
+#     resp = client.completions.create(
+#     model=cfg.model,                   # switch to text-completions model
+#     prompt=prompt,
+#     temperature=cfg.temperature,
+#     top_p=cfg.top_p,
+#     max_tokens=8000,
+#     logprobs=5 if cfg.collect_logprobs else None,
+# )
     content = resp.choices[0].message.content or ""
     
     input_tokens = 0

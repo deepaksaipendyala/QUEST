@@ -29,6 +29,7 @@ Export your key (no .env required, but you can source one if you like):
 ```bash
 export OPENAI_API_KEY="sk-...your-key..."
 unset DRY_LLM    # ensure LLM usage is enabled
+export LLM_COLLECT_LOGPROBS=true  # request token logprobs where the model supports them
 ```
 
 Run iterate with OpenAI:
@@ -77,6 +78,50 @@ python -m src.orchestrator.engine --repo django/django --version 4.1 --code-file
 ```
 
 Context miner reads the local file (default `--repo-root=.`) to build a compact ContextPack passed to the Generator. Artifacts per attempt are in `artifacts/runs/<run_id>/`.
+
+### Static analysis (pylint / mypy)
+
+Static checks (syntax, complexity, basic lint) are always run when `static_analysis.enable: true` in `configs/default.yaml`. To enable external lint/type tools:
+
+```bash
+pip install pylint mypy
+```
+
+With `pylint` and `mypy` on `PATH`, each `attempt_X.static.json` and reliability block will include real lint issue counts instead of `"available": false`.
+
+### Batch runs on TestGenEval Lite (django/django)
+
+To run the orchestrator over a subset of `kjain14/testgenevallite` for `django/django` and collect metrics:
+
+```bash
+# 1. Run orchestrator on first 5 django/django rows from the test split
+python scripts/run_django_batch.py --split test --limit 5 --max-iters 2
+
+# 2. Aggregate attempt-level and run-level stats (coverage, mutation, LLM cost, etc.)
+python scripts/collect_run_stats.py \
+  --runs-dir artifacts/runs \
+  --attempt-csv artifacts/attempt_stats.csv \
+  --run-csv artifacts/run_summary_stats.csv \
+  --coverage-plot artifacts/run_coverage.png
+
+# 3. Re-run with dataset metadata to attach baseline coverage from TestGenEval Lite
+python scripts/collect_run_stats.py \
+  --runs-dir artifacts/runs \
+  --dataset kjain14/testgenevallite \
+  --split test
+
+# 4. Summarize how often the orchestrator beats the dataset baselines (first/last/last_minus_one)
+python scripts/analyze_run_stats.py \
+  --input artifacts/run_summary_stats.csv \
+  --output artifacts/run_vs_baseline.csv
+
+# 5. Export per-attempt metrics (entropy, avg_logprob, mutation_score) vs. baselines
+python scripts/analyze_attempt_stats.py \
+  --attempt-csv artifacts/attempt_stats.csv \
+  --output artifacts/attempt_vs_baseline.csv
+```
+
+The `run_vs_baseline.csv` file gives one row per run with max coverage and whether it beat the dataset baselines; `attempt_vs_baseline.csv` gives one row per attempt with coverage, mutation score, and any available LLM entropy/logprob summaries.
 
 ## Live dashboard (Streamlit)
 

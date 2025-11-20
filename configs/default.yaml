@@ -1,4 +1,5 @@
-runner_url: "http://localhost:3000/runner"
+runner_url: "http://127.0.0.1:3000/runner"
+runner_code_url: "http://127.0.0.1:3000/code"
 runner:
   skip_mutation: false
 llm:
@@ -13,5 +14,5 @@ static_analysis:
 budgets:
   max_iterations: 2
 targets:
-  coverage: 60.0
+  coverage: 90.0
   mutation: 50.0

@@ -35,7 +35,7 @@ def _build_llm_config(raw_cfg: dict[str, object]) -> LLMConfig:
     model_default = "gpt-4o-mini"
     temperature_default = "0.2"
     top_p_default = "0.95"
-    collect_logprobs_default = False
+    collect_logprobs_default = True
 
     if isinstance(llm_block, dict):
         provider_default = str(llm_block.get("provider", provider_default))

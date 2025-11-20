@@ -46,7 +46,7 @@ def _build_llm_config() -> LLMConfig:
     model_default = "gpt-4o-mini"
     temperature_default = "0.2"
     top_p_default = "0.95"
-    collect_logprobs_default = False
+    collect_logprobs_default = True
 
     if isinstance(llm_block, dict):
         provider_default = str(llm_block.get("provider", provider_default))
@@ -175,56 +175,183 @@ def main() -> None:
     llm_metadata0: Optional[Dict] = None
     llm_result0 = None
     
+    # if llm_enabled():
+    #     # Use LLM for initial generation
+    #     is_django = "django" in args.repo.lower()
+    #     framework_instruction = (
+    #         "Use unittest.TestCase (import unittest, create a class inheriting from unittest.TestCase). "
+    #         "For Django, import from django.test import TestCase or SimpleTestCase as needed."
+    #         if is_django
+    #         else "Use pytest (functions starting with test_)"
+    #     )
+        
+    #     # Get a baseline test from the generator as fallback and as an example
+    #     baseline_req = send(gen, gen_payload, cfg)
+    #     baseline_test = baseline_req["test_src"]
+    #     symbols = context.get("symbols") or []
+    #     extra_reqs = ""
+    #     if isinstance(symbols, list) and any(
+    #         isinstance(sym, str) and sym.lower() == "was_modified_since" for sym in symbols
+    #     ):
+    #         extra_reqs = "- Prefer calling was_modified_since with simple timestamps instead of touching the filesystem.\n"
+    #     prompt = (
+    #         f"Generate a Python test module that exercises the target file.\n"
+    #         f"Repository: {args.repo}\nVersion: {args.version}\nFile: {args.code_file}\n"
+    #         f"Test framework: {framework_instruction}\n\n"
+    #         "Example of a working test for this file:\n"
+    #         f"```python\n{baseline_test}\n```\n\n"
+    #         "Requirements:\n"
+    #         "- Test functions/classes that can be tested without file system dependencies when possible\n"
+    #         "- Use simple, direct function calls with mock data\n"
+    #         "- Avoid calling django.views.static.serve with real paths; do not rely on actual files on disk\n"
+    #         "- Make sure all imports are correct and available in the test environment\n"
+    #         "- For Django: Import necessary test base classes (e.g., from django.test import TestCase, SimpleTestCase)\n"
+    #         "- Do NOT include a __main__ guard or run the tests directly\n"
+    #         "- Return ONLY the Python code, no markdown formatting, no explanations, no triple backticks\n"
+    #         f"{extra_reqs}"
+    #     )
+        
+    #     llm_cfg = _build_llm_config()
+    #     llm_start = time.time()
+    #     llm_result0 = run_completion(prompt, llm_cfg)
+    #     llm_duration = time.time() - llm_start
+    #     total_llm_duration += llm_duration
+    #     total_llm_cost += llm_result0.estimated_cost
+    #     total_llm_input_tokens += llm_result0.input_tokens
+    #     total_llm_output_tokens += llm_result0.output_tokens
+        
+    #     candidate_src = llm_result0.text.strip()
+    #     if candidate_src:
+    #         req0: Dict = {"repo": args.repo, "version": args.version, "code_file": args.code_file, "test_src": candidate_src}
+    #     else:
+    #         req0 = baseline_req
+    #     llm_metadata0 = {
+    #         "entropy": llm_result0.entropy,
+    #         "avg_logprob": llm_result0.avg_logprob,
+    #         "token_count": llm_result0.token_count,
+    #         "input_tokens": llm_result0.input_tokens,
+    #         "output_tokens": llm_result0.output_tokens,
+    #         "estimated_cost": llm_result0.estimated_cost,
+    #         "llm_duration_seconds": llm_duration,
+    #     }
+    # else:
+    #     # Fall back to basic generator
+    #     req0: Dict = send(gen, gen_payload, cfg)
+    # Attempt 0 - Free-form initial test generation using raw code file
+    
+    # Attempt 0 - Free-form initial test generation using raw code file
     if llm_enabled():
-        # Use LLM for initial generation
+
+        # 1. Fetch real source code from runner
+        code_fetch_payload = {
+            "repo": args.repo,
+            "version": args.version,
+            "code_file": args.code_file,
+        }
+
+        code_resp = post_runner(cfg.runner_code_url, code_fetch_payload)
+
+        if "contents" not in code_resp:
+            raise RuntimeError(f"Failed to fetch code from runner: {code_resp}")
+
+        code_src = code_resp["contents"]
+        code_src_path = out / "target_code.py"
+        write_text(code_src_path, code_src)
+
+        # 2. Build the free-form GPT prompt
+        # 2. Build the free-form GPT prompt with Django-aware switching
         is_django = "django" in args.repo.lower()
-        framework_instruction = (
-            "Use unittest.TestCase (import unittest, create a class inheriting from unittest.TestCase). "
-            "For Django, import from django.test import TestCase or SimpleTestCase as needed."
-            if is_django
-            else "Use pytest (functions starting with test_)"
-        )
-        
-        # Get a baseline test from the generator as fallback and as an example
-        baseline_req = send(gen, gen_payload, cfg)
-        baseline_test = baseline_req["test_src"]
-        symbols = context.get("symbols") or []
-        extra_reqs = ""
-        if isinstance(symbols, list) and any(
-            isinstance(sym, str) and sym.lower() == "was_modified_since" for sym in symbols
-        ):
-            extra_reqs = "- Prefer calling was_modified_since with simple timestamps instead of touching the filesystem.\n"
-        prompt = (
-            f"Generate a Python test module that exercises the target file.\n"
-            f"Repository: {args.repo}\nVersion: {args.version}\nFile: {args.code_file}\n"
-            f"Test framework: {framework_instruction}\n\n"
-            "Example of a working test for this file:\n"
-            f"```python\n{baseline_test}\n```\n\n"
-            "Requirements:\n"
-            "- Test functions/classes that can be tested without file system dependencies when possible\n"
-            "- Use simple, direct function calls with mock data\n"
-            "- Avoid calling django.views.static.serve with real paths; do not rely on actual files on disk\n"
-            "- Make sure all imports are correct and available in the test environment\n"
-            "- For Django: Import necessary test base classes (e.g., from django.test import TestCase, SimpleTestCase)\n"
-            "- Do NOT include a __main__ guard or run the tests directly\n"
-            "- Return ONLY the Python code, no markdown formatting, no explanations, no triple backticks\n"
-            f"{extra_reqs}"
-        )
-        
+
+        if is_django:
+            test_style_instructions = """
+        You MUST generate tests using Django's unittest framework.
+
+        Strict requirements:
+        - Use: from django.test import SimpleTestCase or TestCase
+        - DO NOT import pytest anywhere
+        - DO NOT use pytest-style asserts or fixtures
+        - Use unittest assertions: self.assertEqual, self.assertTrue, self.assertRaises, etc.
+        - Use unittest.mock instead of pytest.mock
+        - Maximise coverage by using real filesystem:
+            * use tempfile.TemporaryDirectory()
+            * create real files/directories using pathlib.Path
+            * exercise actual Path.exists(), Path.is_dir(), Path.stat(), Path.iterdir()
+            * exercise serve(), directory_index(), and was_modified_since()
+        - Test branches:
+            * directory with show_indexes=True → HTML response
+            * directory with show_indexes=False → Http404
+            * missing file → Http404
+            * valid file → FileResponse (validate headers)
+            * If-Modified-Since → HttpResponseNotModified
+        - Avoid Django test client; call the functions directly.
+        """
+        else:
+            test_style_instructions = """
+            You MUST generate tests using Python's built-in unittest framework.
+
+            Strict requirements:
+            - DO NOT import pytest
+            - DO NOT use pytest-style asserts
+            - DO NOT use fixtures or parametrize
+            - Use: import unittest
+            - Test classes must subclass unittest.TestCase
+            - Use unittest assertions:
+                * self.assertEqual
+                * self.assertTrue
+                * self.assertFalse
+                * self.assertRaises
+            - Use unittest.mock for mocking
+            - Use tempfile.TemporaryDirectory() for real filesystem testing
+            - Use real pathlib.Path operations, avoid mocking whenever possible
+            - Maximise branch coverage and mutation score
+            - Imports must match the repo's internal structure
+            """
+
+        prompt = f"""
+        You are an expert Python test generator.
+        Your goal is to maximise BRANCH COVERAGE and MUTATION SCORE for the target file.
+
+        Repository: {args.repo}
+        Version: {args.version}
+        Target file: {args.code_file}
+
+        Here is the full source code of the file under test:
+        ----------------
+        {code_src}
+        ----------------
+
+        Follow these framework rules:
+        {test_style_instructions}
+
+        Global requirements for ALL repos:
+        - Maximise branch coverage
+        - Use real filesystem operations where possible (tempfile.TemporaryDirectory())
+        - Avoid network or database calls
+        - Imports must be correct for the target repo
+        - Output ONLY Python test code (no markdown, no comments, no headings)
+        """
+
         llm_cfg = _build_llm_config()
         llm_start = time.time()
+
         llm_result0 = run_completion(prompt, llm_cfg)
         llm_duration = time.time() - llm_start
+
         total_llm_duration += llm_duration
         total_llm_cost += llm_result0.estimated_cost
         total_llm_input_tokens += llm_result0.input_tokens
         total_llm_output_tokens += llm_result0.output_tokens
-        
+
         candidate_src = llm_result0.text.strip()
-        if candidate_src:
-            req0: Dict = {"repo": args.repo, "version": args.version, "code_file": args.code_file, "test_src": candidate_src}
-        else:
-            req0 = baseline_req
+
+        # 3. Build request to runner
+        req0 = {
+            "repo": args.repo,
+            "version": args.version,
+            "code_file": args.code_file,
+            "test_src": candidate_src,
+        }
+
         llm_metadata0 = {
             "entropy": llm_result0.entropy,
             "avg_logprob": llm_result0.avg_logprob,
@@ -234,16 +361,21 @@ def main() -> None:
             "estimated_cost": llm_result0.estimated_cost,
             "llm_duration_seconds": llm_duration,
         }
+
     else:
-        # Fall back to basic generator
-        req0: Dict = send(gen, gen_payload, cfg)
-    
+        # fallback to basic generator
+        req0 = send(gen, gen_payload, cfg)
+        llm_metadata0 = None
+
+
     write_json(out / "attempt_0.request.json", req0)
     if llm_metadata0:
         write_json(out / "attempt_0.llm_metadata.json", llm_metadata0)
     
     attempt0_path = out / "attempt_0.test_src.py"
     write_text(attempt0_path, req0["test_src"])
+
+
     
     static_start = time.time()
     static0 = _maybe_analyze(cfg, attempt0_path, out / "attempt_0.static.json")
@@ -307,6 +439,8 @@ def main() -> None:
     current_src = req0["test_src"]
     for k in range(1, max_iters + 1):
         route = decide(critique0, k - 1, max_iters)
+        route = "ENHANCE"
+
         if route != "ENHANCE":
             append_event(events_log, f"run={run_id} finish reason=router-finish iter={k-1}")
             break
