@@ -11,6 +11,8 @@ llm:
   collect_logprobs: true
 static_analysis:
   enable: true
+supervisor:
+  use_llm: true  # Enable LLM-enhanced supervisor analysis
 budgets:
   max_iterations: 2
 targets:

@@ -95,7 +95,10 @@ def _build_history_chart(history: List[Dict[str, Any]]) -> pd.DataFrame:
     if df.empty:
         return df
     df = df.set_index("index")
-    return df[["coverage", "mutation_score"]]
+    # Include all metrics: coverage, mutation, entropy, avg_logprob
+    chart_cols = ["coverage", "mutation_score", "entropy", "avg_logprob"]
+    available_cols = [col for col in chart_cols if col in df.columns]
+    return df[available_cols]
 
 
 def _iteration_table(records: List[Dict[str, Any]]) -> pd.DataFrame:
@@ -148,13 +151,64 @@ def _render_iteration_details(records: List[Dict[str, Any]]) -> None:
             if record.get("llm_metadata"):
                 st.caption("LLM metadata")
                 st.json(record["llm_metadata"], expanded=False)
+            
+            if record.get("supervisor_llm_metadata"):
+                st.caption("Supervisor LLM metadata")
+                supervisor_meta = record["supervisor_llm_metadata"]
+                col1, col2, col3 = st.columns(3)
+                with col1:
+                    st.metric("Entropy", f"{supervisor_meta.get('entropy', 0):.3f}")
+                with col2:
+                    st.metric("Avg LogProb", f"{supervisor_meta.get('avg_logprob', 0):.3f}")
+                with col3:
+                    cost = supervisor_meta.get('estimated_cost', 0)
+                    st.metric("Cost", _format_cost(cost))
+                
+                with st.expander("Full supervisor LLM metadata"):
+                    st.json(supervisor_meta, expanded=False)
 
             if record.get("reliability"):
                 st.caption("Reliability (pre / post)")
                 st.json(record["reliability"], expanded=False)
             if record.get("critique"):
                 st.caption("Supervisor critique")
-                st.json(record["critique"], expanded=False)
+                critique = record["critique"]
+                
+                # Display LLM suggestions if available
+                llm_suggestions = critique.get("llm_suggestions")
+                if llm_suggestions:
+                    st.markdown("**LLM Supervisor Analysis:**")
+                    
+                    # Priority issues
+                    if llm_suggestions.get("priority_issues"):
+                        st.markdown("🚨 **Priority Issues:**")
+                        for issue in llm_suggestions["priority_issues"][:3]:
+                            st.markdown(f"- {issue}")
+                    
+                    # Coverage suggestions
+                    if llm_suggestions.get("coverage_suggestions"):
+                        st.markdown("📊 **Coverage Improvements:**")
+                        for suggestion in llm_suggestions["coverage_suggestions"][:3]:
+                            st.markdown(f"- {suggestion}")
+                    
+                    # Mutation suggestions
+                    if llm_suggestions.get("mutation_suggestions"):
+                        st.markdown("🧬 **Mutation Score Improvements:**")
+                        for suggestion in llm_suggestions["mutation_suggestions"][:3]:
+                            st.markdown(f"- {suggestion}")
+                    
+                    # Next steps
+                    if llm_suggestions.get("next_steps"):
+                        st.markdown("🎯 **Next Steps:**")
+                        for step in llm_suggestions["next_steps"][:3]:
+                            st.markdown(f"- {step}")
+                    
+                    with st.expander("View full LLM analysis"):
+                        st.json(llm_suggestions, expanded=False)
+                
+                # Display full critique in expandable section
+                with st.expander("View full supervisor critique"):
+                    st.json(critique, expanded=False)
 
             supervisor_instructions: Optional[List[str]] = None
             if agent_role == "Enhancer" and previous_critique:
@@ -242,11 +296,48 @@ def main() -> None:
     metric_cols[5].metric("Total duration", _format_duration(summary.get("total_duration_seconds")))
 
     history_df = _build_history_chart(detail["history"])
-    st.markdown("### Coverage & mutation trend")
+    st.markdown("### Coverage, Mutation & LLM Confidence Trend")
     if history_df.empty:
         st.info("Trend data not available yet.")
     else:
-        st.line_chart(history_df, height=260)
+        # Create two charts: one for coverage/mutation (percentages), one for entropy/logprob (confidence)
+        col1, col2 = st.columns(2)
+        
+        with col1:
+            st.markdown("**Coverage & Mutation Score (%)**")
+            coverage_mutation_df = history_df[["coverage", "mutation_score"]].copy() if all(col in history_df.columns for col in ["coverage", "mutation_score"]) else pd.DataFrame()
+            if not coverage_mutation_df.empty:
+                # Filter out negative values (N/A)
+                coverage_mutation_df = coverage_mutation_df[coverage_mutation_df["coverage"] >= 0]
+                coverage_mutation_df = coverage_mutation_df[coverage_mutation_df["mutation_score"] >= 0]
+                if not coverage_mutation_df.empty:
+                    st.line_chart(coverage_mutation_df, height=260)
+                else:
+                    st.info("No valid coverage/mutation data")
+            else:
+                st.info("No coverage/mutation data")
+        
+        with col2:
+            st.markdown("**LLM Confidence Metrics**")
+            st.caption("Lower entropy = more confident | Higher abs(logprob) = more confident")
+            confidence_df = pd.DataFrame()
+            if "entropy" in history_df.columns and "avg_logprob" in history_df.columns:
+                confidence_df = history_df[["entropy", "avg_logprob"]].copy()
+                # Drop rows where both are None/NaN
+                confidence_df = confidence_df.dropna(how="all")
+                if not confidence_df.empty:
+                    # For visualization: show entropy as-is, and logprob as absolute value
+                    # (lower entropy = more confident, higher abs(logprob) = more confident)
+                    if "avg_logprob" in confidence_df.columns:
+                        confidence_df["logprob_confidence"] = confidence_df["avg_logprob"].abs()
+                        confidence_df = confidence_df[["entropy", "logprob_confidence"]].rename(
+                            columns={"logprob_confidence": "avg_logprob (abs)"}
+                        )
+                    st.line_chart(confidence_df, height=260)
+                else:
+                    st.info("No LLM confidence data")
+            else:
+                st.info("No LLM confidence data (entropy/logprob)")
 
     tabs = st.tabs(["Iterations", "Reliability snapshot", "LLM feed", "Events"])
     with tabs[0]:

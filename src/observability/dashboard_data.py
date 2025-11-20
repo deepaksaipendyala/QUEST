@@ -261,6 +261,7 @@ def _load_orchestrator_attempts(run_path: Path) -> List[Dict[str, Any]]:
         critique = _safe_json(run_path / f"{stem}.critique.json")
         static_metrics = _safe_json(run_path / f"{stem}.static.json")
         llm_metadata = _safe_json(run_path / f"{stem}.llm_metadata.json")
+        supervisor_llm_metadata = _safe_json(run_path / f"{stem}.supervisor_llm_metadata.json")
         pre_reliability = _safe_json(run_path / f"{stem}.pre_reliability.json")
         post_reliability = _safe_json(run_path / f"{stem}.post_reliability.json")
         metrics = _safe_json(run_path / f"{stem}.metrics.json")
@@ -288,6 +289,7 @@ def _load_orchestrator_attempts(run_path: Path) -> List[Dict[str, Any]]:
             "critique": critique,
             "static_metrics": static_metrics if static_metrics else None,
             "llm_metadata": llm_metadata,
+            "supervisor_llm_metadata": supervisor_llm_metadata,
             "reliability": reliability if reliability else None,
             "metrics": metrics,
             "test_src": test_src,
@@ -303,6 +305,7 @@ def _load_orchestrator_attempts(run_path: Path) -> List[Dict[str, Any]]:
 def _build_history(records: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
     history: List[Dict[str, Any]] = []
     for record in records:
+        llm_metadata = record.get("llm_metadata") or {}
         history.append(
             {
                 "stage": record["label"],
@@ -311,6 +314,8 @@ def _build_history(records: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
                 "mutation_score": record.get("mutation_score"),
                 "lint_issues": record.get("lint_issues"),
                 "status": record.get("status"),
+                "entropy": llm_metadata.get("entropy"),
+                "avg_logprob": llm_metadata.get("avg_logprob"),
             }
         )
     return history

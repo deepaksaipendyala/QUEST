@@ -1,7 +1,7 @@
 from __future__ import annotations
-from typing import List, TypedDict
+from typing import List, TypedDict, Dict, Any
 
-class Critique(TypedDict):
+class Critique(TypedDict, total=False):
     compile_error: bool
     no_tests: bool
     low_coverage: bool
@@ -14,6 +14,9 @@ class Critique(TypedDict):
     no_progress: bool
     missing_lines: List[int]
     instructions: List[str]
+    # Optional LLM supervisor enhancements
+    llm_suggestions: Dict[str, List[str]]  # Structured LLM suggestions by category
+    llm_supervisor_metadata: Dict[str, Any]  # LLM call metadata (entropy, cost, tokens, etc.)
 
 class EnhanceTask(TypedDict):
     current_test_src: str

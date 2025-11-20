@@ -405,6 +405,14 @@ def main() -> None:
     sup_payload["post_reliability"] = post_reliability0 or {}
     critique0: Dict = send(sup, sup_payload, cfg)
 
+    # Track supervisor LLM metadata if available
+    supervisor_llm_metadata = critique0.get("llm_supervisor_metadata")
+    if supervisor_llm_metadata:
+        total_llm_cost += supervisor_llm_metadata.get("estimated_cost", 0.0)
+        total_llm_input_tokens += supervisor_llm_metadata.get("input_tokens", 0)
+        total_llm_output_tokens += supervisor_llm_metadata.get("output_tokens", 0)
+        write_json(out / "attempt_0.supervisor_llm_metadata.json", supervisor_llm_metadata)
+
     cov = max(_as_float(resp0.get("coverage", 0.0), 0.0), 0.0)
     mutation_score = _as_float(resp0.get("mutation_score", -1.0), -1.0)
     critique0, last_cov, last_mut, stagnation = _update_progress(
@@ -522,6 +530,15 @@ def main() -> None:
         sup_payload["pre_reliability"] = pre_reliability or {}
         sup_payload["post_reliability"] = post_reliability or {}
         critique0 = send(sup, sup_payload, cfg)
+        
+        # Track supervisor LLM metadata if available
+        supervisor_llm_metadata = critique0.get("llm_supervisor_metadata")
+        if supervisor_llm_metadata:
+            total_llm_cost += supervisor_llm_metadata.get("estimated_cost", 0.0)
+            total_llm_input_tokens += supervisor_llm_metadata.get("input_tokens", 0)
+            total_llm_output_tokens += supervisor_llm_metadata.get("output_tokens", 0)
+            write_json(out / f"attempt_{k}.supervisor_llm_metadata.json", supervisor_llm_metadata)
+        
         critique0, last_cov, last_mut, stagnation = _update_progress(
             critique0, cov, mutation, last_cov, last_mut, stagnation
         )
@@ -534,6 +551,7 @@ def main() -> None:
             "static_analysis_duration_seconds": static_duration,
         }
         if llm_metadata:
+            attempt_metrics["llm_duration_seconds"] = llm_metadata.get("llm_duration_seconds", 0.0)
             attempt_metrics["llm_cost"] = llm_metadata.get("estimated_cost", 0.0)
             attempt_metrics["llm_input_tokens"] = llm_metadata.get("input_tokens", 0)
             attempt_metrics["llm_output_tokens"] = llm_metadata.get("output_tokens", 0)
