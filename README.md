@@ -1,151 +1,72 @@
-# testgenflow (v0)
+# Enhancing LLM Test Generation via Multi-Agent Coordination and Quality Metrics
 
-Minimal pipeline that generates a pytest module, sends it to the TestGenEval/SWE-bench runner via HTTP (`POST /runner`), and stores the response. The runner is served by the Flask app in `src/runner/server.py`.
+A multi-agent pipeline that drafts test suites, executes them, analyzes coverage and reliability, and iteratively refines tests using LLMs.
 
-## Quick start
+## Setup
+1. **Project venv** – install main deps.
+   ```bash
+   python3 -m venv .venv
+   source .venv/bin/activate
+   pip install -e .
+   ```
+2. **Runner conda env** - Run these commands from `src/runner` directory in a new terminal.
+   ```bash
+   conda env create -f environment-mac.yaml -n testgeneval
+   conda activate testgeneval
+   conda run -n testgeneval python -m pip install --upgrade "datasets>=2.19.0"
+  
+   ```
+4. **Environment variables**
+   ```bash
+   export PYTHONPATH="$(pwd)/gitrepo:${PYTHONPATH}" # Can also replace pwd with absolute path
+   export SWEBENCH_DOCKER_FORK_DIR="$(pwd)/gitrepo" # Can also replace pwd with absolute path
+   export OPENAI_API_KEY="sk-..."
+   export LLM_COLLECT_LOGPROBS=true
+   ```
 
-1. `pip install -e .` (or `pip install -r requirements.txt` if you export one)
-2. Start the runner server in `src/runner`. See `src/runner/README.md` for full details.
-3. `python -m src.pipeline.run_once --repo django/django --version 4.1 --code-file django/views/static.py`
+## Starting the Runner
+1. **Start (script)**
+   ```bash
+   ./start_runner.sh
+   ```
+2. **Start (manual)**.
+   ```bash
+   cd src/runner
+   export PYTHONPATH="$(pwd)/../../gitrepo:${PYTHONPATH}"
+   export SWEBENCH_DOCKER_FORK_DIR="$(pwd)/../../gitrepo"
+   conda run -n testgeneval python server.py
+   ```
 
-Artifacts and metrics land in `artifacts/runs/<run_id>/`.
+## Core Pipeline Commands
+All commands expect the runner at `http://localhost:3000/runner` (see `configs/default.yaml`). Activate `.venv` first.
 
-## Offline usage (no internet)
+| Goal | Command | Notes |
+| --- | --- | --- |
+| Single attempt (baseline) | `python -m src.pipeline.run_once --repo django/django --version 4.1 --code-file django/views/static.py` | Fast covering smoke test |
+| Iterative generator + enhancer | `python -m src.pipeline.iterate --repo django/django --version 4.1 --code-file django/views/static.py --max-iters 2` | Requires LLM unless `DRY_LLM=1` |
+| Full orchestrator loop | `python -m src.orchestrator.engine --repo django/django --version 4.1 --code-file django/views/static.py --max-iters 3` | Runs generator → supervisor → enhancer with routing |
 
-- Set dry run: `export DRY_RUN=1` (or keep `runner_url: dryrun://runner` in configs).
-- Skip installs: just run `pytest -q` and the pipeline.
-- Optional runtime validation (requires pydantic): `export ENABLE_VALIDATION=1`
+- Note: Above pipeline commands only run on a single row from the dataset. To run on multiple rows, you can make use of the helper script `scripts/run_django_batch.py` which will iterate over multiple code files in the Django dataset.
 
-## Using OpenAI (LLM Enhancer)
+## Configuration
+- Many configuration options are available in `configs/default.yaml`
+- Mutation can be skipped with `export SKIP_MUTATION=true`; keep it `false` for research-quality runs so supervisor + router use score deltas.
 
-Install the OpenAI client:
-
+## Live Dashboard
 ```bash
-pip install openai
-```
-
-Export your key (no .env required, but you can source one if you like):
-
-```bash
-export OPENAI_API_KEY="sk-...your-key..."
-unset DRY_LLM    # ensure LLM usage is enabled
-export LLM_COLLECT_LOGPROBS=true  # request token logprobs where the model supports them
-```
-
-Run iterate with OpenAI:
-
-```bash
-python -m src.pipeline.iterate --repo django/django --version 4.1 --code-file django/views/static.py --max-iters 2
-```
-
-Offline fallback (no network):
-
-```bash
-export DRY_RUN=1
-export DRY_LLM=1
-python -m src.pipeline.iterate --repo django/django --version 4.1 --code-file django/views/static.py --max-iters 2
-```
-
-## Quick checks
-
-```bash
-# OpenAI path
-pip install openai
-export OPENAI_API_KEY="sk-..."; unset DRY_LLM
-python -m src.pipeline.iterate --repo django/django --version 4.1 --code-file django/views/static.py --max-iters 1
-
-# Offline path
-export DRY_RUN=1; export DRY_LLM=1
-python -m src.pipeline.iterate --repo django/django --version 4.1 --code-file django/views/static.py --max-iters 1
-```
-
-## Orchestrator (v2 backbone)
-
-Offline (synthetic Runner + rule-based LLM):
-
-```bash
-export DRY_RUN=1
-export DRY_LLM=1
-python -m src.orchestrator.engine --repo django/django --version 4.1 --code-file django/views/static.py --max-iters 2
-```
-
-With OpenAI:
-
-```bash
-pip install openai
-export OPENAI_API_KEY="sk-..."; unset DRY_LLM
-python -m src.orchestrator.engine --repo django/django --version 4.1 --code-file django/views/static.py --max-iters 2
-```
-
-Context miner reads the local file (default `--repo-root=.`) to build a compact ContextPack passed to the Generator. Artifacts per attempt are in `artifacts/runs/<run_id>/`.
-
-### Static analysis (pylint / mypy)
-
-Static checks (syntax, complexity, basic lint) are always run when `static_analysis.enable: true` in `configs/default.yaml`. To enable external lint/type tools:
-
-```bash
-pip install pylint mypy
-```
-
-With `pylint` and `mypy` on `PATH`, each `attempt_X.static.json` and reliability block will include real lint issue counts instead of `"available": false`.
-
-### Batch runs on TestGenEval Lite (django/django)
-
-To run the orchestrator over a subset of `kjain14/testgenevallite` for `django/django` and collect metrics:
-
-```bash
-# 1. Run orchestrator on first 5 django/django rows from the test split
-python scripts/run_django_batch.py --split test --limit 5 --max-iters 2
-
-# 2. Aggregate attempt-level and run-level stats (coverage, mutation, LLM cost, etc.)
-python scripts/collect_run_stats.py \
-  --runs-dir artifacts/runs \
-  --attempt-csv artifacts/attempt_stats.csv \
-  --run-csv artifacts/run_summary_stats.csv \
-  --coverage-plot artifacts/run_coverage.png
-
-# 3. Re-run with dataset metadata to attach baseline coverage from TestGenEval Lite
-python scripts/collect_run_stats.py \
-  --runs-dir artifacts/runs \
-  --dataset kjain14/testgenevallite \
-  --split test
-
-# 4. Summarize how often the orchestrator beats the dataset baselines (first/last/last_minus_one)
-python scripts/analyze_run_stats.py \
-  --input artifacts/run_summary_stats.csv \
-  --output artifacts/run_vs_baseline.csv
-
-# 5. Export per-attempt metrics (entropy, avg_logprob, mutation_score) vs. baselines
-python scripts/analyze_attempt_stats.py \
-  --attempt-csv artifacts/attempt_stats.csv \
-  --output artifacts/attempt_vs_baseline.csv
-```
-
-The `run_vs_baseline.csv` file gives one row per run with max coverage and whether it beat the dataset baselines; `attempt_vs_baseline.csv` gives one row per attempt with coverage, mutation score, and any available LLM entropy/logprob summaries.
-
-## Live dashboard (Streamlit)
-
-Visualize runs, LLM calls, coverage/mutation trends, lint findings, and router events in real time:
-
-```bash
+source .venv/bin/activate
 pip install streamlit
-streamlit run streamlit_app.py
+TESTGENEVAL_RUNS_DIR=/path/to/runs streamlit run streamlit_app.py
 ```
+- Shows latest LLM calls, reliability labels, coverage/mutation trends, router decisions, and static analysis warnings.
 
-- Uses `artifacts/runs/` by default (override with `TESTGENEVAL_RUNS_DIR=/path/to/runs`).
-- Sidebar lets you filter run types, adjust refresh cadence, and pick a focused run.
-- Each iteration shows requests/responses, reliability scores, static analysis, LLM entropy/logprobs, and test source.
-- The “LLM feed” tab surfaces the most recent completions across all runs for quick health checks.
-
-## TestGenEval Integration
-
-- Clone the dataset locally (kept out of version control):
-
-  ```bash
-  mkdir -p external
-  git clone https://github.com/facebookresearch/testgeneval.git external/testgeneval
-  ```
-
-- Follow `src/runner/README.md` to provision the conda env, patch/pull Docker images, and verify `python src/runner/test.py` works.
-- Launch the runner Flask server (see Quick start). This exposes the HTTP API consumed by the pipeline/orchestrator.
-- Run the orchestrator against any TestGenEval task once the runner server is up. Responses and critiques appear under `artifacts/runs/<run_id>/`.
+## Artifact Layout
+```
+artifacts/runs/run_<ts>_<id>/
+├── context.json            # mined repo slice
+├── run_summary.json        # cost, coverage, mutation, tokens
+├── events.log              # orchestrator timeline
+├── attempt_0/…attempt_N/   # request, response, test_src.py, static.json,
+│                           # reliability (pre/post), execution metrics, critique
+└── streamlit_cache/…       # dashboard scratch data (optional)
+```
