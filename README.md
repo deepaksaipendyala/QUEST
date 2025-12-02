@@ -1,4 +1,4 @@
-# Enhancing LLM Test Generation via Multi-Agent Coordination and Quality Metrics
+# QUEST (Quality-Enhanced Supervised Testing)
 
 A multi-agent pipeline that drafts test suites, executes them, analyzes coverage and reliability, and iteratively refines tests using LLMs.
 
