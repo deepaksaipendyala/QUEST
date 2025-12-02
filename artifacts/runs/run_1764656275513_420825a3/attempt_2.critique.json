@@ -1,0 +1,73 @@
+{
+  "compile_error": false,
+  "no_tests": false,
+  "low_coverage": true,
+  "low_mutation": true,
+  "mutation_score": 0.0,
+  "lint_issue_count": 89,
+  "lint_missing_tools": [],
+  "coverage_delta": 0.0,
+  "mutation_delta": 0.0,
+  "no_progress": true,
+  "missing_lines": [],
+  "instructions": [
+    "Resolve 89 lint/type errors reported by available tools.",
+    "Increase test coverage with more assertions.",
+    "Improve mutation score from 0.00% toward 50.00%.",
+    "Fix 89 lint/type issues noted in reliability analysis.",
+    "Reliability blockers: Coverage below target threshold.; Mutation score below target..",
+    "Fix 89 lint/type issues noted in reliability analysis.",
+    "Address runner error reported: Success.",
+    "PRIORITY: Increase test coverage from 7.14% to at least 90% to meet target.",
+    "PRIORITY: Improve mutation score from 0.00% to at least 50% to meet target.",
+    "Coverage: Write unit tests for all functions in the codebase, especially those with complex logic (e.g., functions with cyclomatic complexity above 10).",
+    "Coverage: Focus on testing edge cases for the single class present, particularly any methods that handle data processing or user input.",
+    "Coverage: Identify and cover any branches in conditional statements that are currently untested, especially in functions with multiple return statements.",
+    "Mutation: Create tests that specifically target edge cases and error conditions, such as invalid inputs or boundary values.",
+    "Mutation: Add tests that assert the expected behavior when exceptions are raised, ensuring that the code handles errors gracefully.",
+    "Mutation: Implement tests that modify the state of the application to ensure that side effects are properly validated.",
+    "Quality: Address the 89 lint issues by following PEP 8 guidelines, focusing on naming conventions and line length.",
+    "Quality: Refactor the code to reduce complexity, particularly in functions that exceed a cyclomatic complexity of 10."
+  ],
+  "llm_suggestions": {
+    "priority_issues": [
+      "Increase test coverage from 7.14% to at least 90% to meet target.",
+      "Improve mutation score from 0.00% to at least 50% to meet target."
+    ],
+    "coverage_suggestions": [
+      "Write unit tests for all functions in the codebase, especially those with complex logic (e.g., functions with cyclomatic complexity above 10).",
+      "Focus on testing edge cases for the single class present, particularly any methods that handle data processing or user input.",
+      "Identify and cover any branches in conditional statements that are currently untested, especially in functions with multiple return statements."
+    ],
+    "mutation_suggestions": [
+      "Create tests that specifically target edge cases and error conditions, such as invalid inputs or boundary values.",
+      "Add tests that assert the expected behavior when exceptions are raised, ensuring that the code handles errors gracefully.",
+      "Implement tests that modify the state of the application to ensure that side effects are properly validated."
+    ],
+    "code_quality_suggestions": [
+      "Address the 89 lint issues by following PEP 8 guidelines, focusing on naming conventions and line length.",
+      "Refactor the code to reduce complexity, particularly in functions that exceed a cyclomatic complexity of 10.",
+      "Consider breaking down the single class into multiple classes to improve maintainability and readability."
+    ],
+    "test_strategy_suggestions": [
+      "Adopt a test-driven development (TDD) approach to ensure that new features are covered by tests before implementation.",
+      "Implement integration tests to cover interactions between components, especially if the application has multiple modules.",
+      "Regularly review and update tests to ensure they remain relevant as the codebase evolves."
+    ],
+    "next_steps": [
+      "Identify and document all functions and branches that are currently untested.",
+      "Create a plan to write unit tests for the identified functions, focusing on edge cases and error handling.",
+      "Refactor the code to address lint issues and reduce complexity.",
+      "Run mutation testing to identify weak spots and create targeted tests to improve the mutation score.",
+      "Establish a regular review process for test coverage and mutation scores to ensure ongoing improvement."
+    ]
+  },
+  "llm_supervisor_metadata": {
+    "entropy": 0.5379428962273144,
+    "avg_logprob": -0.3728736018222142,
+    "token_count": 459,
+    "input_tokens": 397,
+    "output_tokens": 459,
+    "estimated_cost": 0.00033495
+  }
+}

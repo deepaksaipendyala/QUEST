@@ -1,0 +1,25 @@
+{
+  "syntax_ok": true,
+  "syntax_error": null,
+  "line_count": 99,
+  "function_count": 16,
+  "class_count": 1,
+  "avg_function_length": 3.6875,
+  "max_function_length": 8,
+  "todo_count": 0,
+  "complexity": 2,
+  "linters": {
+    "pylint": {
+      "available": true,
+      "issue_count": 2,
+      "exit_code": 2,
+      "output": "************* Module attempt_2.test_src\nattempt_2.test_src.py:5:0: E0401: Unable to import 'django.http' (import-error)\nattempt_2.test_src.py:6:0: E0401: Unable to import 'django.views.static' (import-error)\n"
+    },
+    "mypy": {
+      "available": true,
+      "issue_count": 18,
+      "exit_code": 1,
+      "output": "attempt_2.test_src.py:5: error: Cannot find implementation or library stub for module named \"django.http\"\nattempt_2.test_src.py:6: error: Cannot find implementation or library stub for module named \"django.views.static\"\nattempt_2.test_src.py:6: note: See https://mypy.readthedocs.io/en/stable/running_mypy.html#missing-imports\nattempt_2.test_src.py:10: error: Function is missing a return type annotation\nattempt_2.test_src.py:10: note: Use \"-> None\" if function does not return a value\nattempt_2.test_src.py:20: error: Function is missing a return type annotation\nattempt_2.test_src.py:20: note: Use \"-> None\" if function does not return a value\nattempt_2.test_src.py:23: error: Function is missing a return type annotation\nattempt_2.test_src.py:23: note: Use \"-> None\" if function does not return a value\nattempt_2.test_src.py:33: error: Function is missing a return type annotation\nattempt_2.test_src.py:33: note: Use \"-> None\" if function does not return a value\nattempt_2.test_src.py:37: error: Function is missing a return type annotation\nattempt_2.test_src.py:37: note: Use \"-> None\" if function does not return a value\nattempt_2.test_src.py:44: error: Function is missing a return type annotation\nattempt_2.test_src.py:44: note: Use \"-> None\" if function does not return a value\nattempt_2.test_src.py:48: error: Function is missing a return type annotation\nattempt_2.test_src.py:48: note: Use \"-> None\" if function does not return a value\nattempt_2.test_src.py:56: error: Function is missing a return type annotation\nattempt_2.test_src.py:56: note: Use \"-> None\" if function does not return a value\nattempt_2.test_src.py:62: error: Function is missing a return type annotation\nattempt_2.test_src.py:62: note: Use \"-> None\" if function does not return a value\nattempt_2.test_src.py:68: error: Function is missing a return type annotation\nattempt_2.test_src.py:68: note: Use \"-> None\" if function does not return a value\nattempt_2.test_src.py:74: error: Function is missing a return type annotation\nattempt_2.test_src.py:74: note: Use \"-> None\" if function does not return a value\nattempt_2.test_src.py:77: error: Function is missing a return type annotation\nattempt_2.test_src.py:77: note: Use \"-> None\" if function does not return a value\nattempt_2.test_src.py:80: error: Function is missing a return type annotation\nattempt_2.test_src.py:80: note: Use \"-> None\" if function does not return a value\nattempt_2.test_src.py:83: error: Function is missing a return type annotation\nattempt_2.test_src.py:83: note: Use \"-> None\" if function does not return a value\nattempt_2.test_src.py:89: error: Function is missing a return type annotation\nattempt_2.test_src.py:89: note: Use \"-> None\" if function does not return a value\nattempt_2.test_src.py:95: error: Function is missing a return type annotation\nattempt_2.test_src.py:95: note: Use \"-> None\" if function does not return a value\nFound 18 errors in 1 file (checked 1 source file)\n"
+    }
+  }
+}

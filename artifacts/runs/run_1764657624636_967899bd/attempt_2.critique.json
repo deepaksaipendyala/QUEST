@@ -1,0 +1,73 @@
+{
+  "compile_error": false,
+  "no_tests": false,
+  "low_coverage": true,
+  "low_mutation": true,
+  "mutation_score": 2.180000000000007,
+  "lint_issue_count": 49,
+  "lint_missing_tools": [],
+  "coverage_delta": -0.5602240896358595,
+  "mutation_delta": -0.269999999999996,
+  "no_progress": false,
+  "missing_lines": [],
+  "instructions": [
+    "Resolve 49 lint/type errors reported by available tools.",
+    "Increase test coverage with more assertions.",
+    "Improve mutation score from 2.18% toward 50.00%.",
+    "Fix 49 lint/type issues noted in reliability analysis.",
+    "Reliability blockers: Coverage below target threshold.; Mutation score below target..",
+    "Fix 49 lint/type issues noted in reliability analysis.",
+    "Address runner error reported: Success.",
+    "PRIORITY: Increase test coverage to meet the target of 90%.",
+    "PRIORITY: Improve mutation score to meet the target of 50%.",
+    "Coverage: Identify and write tests for the 56% of code that is currently not covered. Focus on critical functions that handle edge cases.",
+    "Coverage: Add unit tests for all branches in the main function of the class, especially for error handling and boundary conditions.",
+    "Coverage: Implement integration tests that cover interactions between multiple functions, particularly those that are currently untested.",
+    "Mutation: Create tests that specifically target the logic in the class methods to ensure that all branches are executed.",
+    "Mutation: Add tests that simulate invalid inputs to the class methods to ensure that the code handles these cases correctly.",
+    "Mutation: Focus on writing tests that cover the logic of conditional statements and loops to increase the mutation score.",
+    "Quality: Address the 49 lint issues by following the PEP 8 style guide, focusing on naming conventions and line lengths.",
+    "Quality: Refactor the code to reduce complexity; consider breaking down large functions into smaller, more manageable ones."
+  ],
+  "llm_suggestions": {
+    "priority_issues": [
+      "Increase test coverage to meet the target of 90%.",
+      "Improve mutation score to meet the target of 50%."
+    ],
+    "coverage_suggestions": [
+      "Identify and write tests for the 56% of code that is currently not covered. Focus on critical functions that handle edge cases.",
+      "Add unit tests for all branches in the main function of the class, especially for error handling and boundary conditions.",
+      "Implement integration tests that cover interactions between multiple functions, particularly those that are currently untested."
+    ],
+    "mutation_suggestions": [
+      "Create tests that specifically target the logic in the class methods to ensure that all branches are executed.",
+      "Add tests that simulate invalid inputs to the class methods to ensure that the code handles these cases correctly.",
+      "Focus on writing tests that cover the logic of conditional statements and loops to increase the mutation score."
+    ],
+    "code_quality_suggestions": [
+      "Address the 49 lint issues by following the PEP 8 style guide, focusing on naming conventions and line lengths.",
+      "Refactor the code to reduce complexity; consider breaking down large functions into smaller, more manageable ones.",
+      "Ensure that all functions have docstrings explaining their purpose, parameters, and return values."
+    ],
+    "test_strategy_suggestions": [
+      "Implement a test-driven development (TDD) approach for new features to ensure that tests are written before code.",
+      "Regularly review and refactor tests to ensure they remain relevant and effective as the codebase evolves.",
+      "Consider using property-based testing to explore a wider range of input scenarios and edge cases."
+    ],
+    "next_steps": [
+      "Identify and write tests for uncovered code paths, focusing on critical functions.",
+      "Refactor code to address lint issues and reduce complexity.",
+      "Create tests targeting edge cases and invalid inputs to improve mutation score.",
+      "Review existing tests for relevance and effectiveness, updating as necessary.",
+      "Set up a continuous integration pipeline to automatically run tests and report coverage and mutation scores."
+    ]
+  },
+  "llm_supervisor_metadata": {
+    "entropy": 0.5729693274912845,
+    "avg_logprob": -0.39715207389791196,
+    "token_count": 430,
+    "input_tokens": 397,
+    "output_tokens": 430,
+    "estimated_cost": 0.00031755
+  }
+}

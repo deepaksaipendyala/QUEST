@@ -1,0 +1,21 @@
+{
+  "compile_error": false,
+  "no_tests": false,
+  "low_coverage": true,
+  "low_mutation": false,
+  "mutation_score": 65.22,
+  "lint_issue_count": 19,
+  "lint_missing_tools": [],
+  "coverage_delta": 3.1746031746031633,
+  "mutation_delta": 4.350000000000001,
+  "no_progress": false,
+  "missing_lines": [],
+  "instructions": [
+    "Resolve 19 lint/type errors reported by available tools.",
+    "Increase test coverage with more assertions.",
+    "Fix 19 lint/type issues noted in reliability analysis.",
+    "Reliability blockers: Coverage close to target; review before trust..",
+    "Fix 19 lint/type issues noted in reliability analysis.",
+    "Address runner error reported: Success."
+  ]
+}

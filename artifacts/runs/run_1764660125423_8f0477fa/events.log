@@ -1,0 +1,3 @@
+t=1764660152429 run=run_1764660125423_8f0477fa attempt=0 state=RUN status=failed cov=0.00
+t=1764660396164 run=run_1764660125423_8f0477fa attempt=1 state=RUN status=success cov=26.83
+t=1764660657539 run=run_1764660125423_8f0477fa attempt=2 state=RUN status=success cov=26.83

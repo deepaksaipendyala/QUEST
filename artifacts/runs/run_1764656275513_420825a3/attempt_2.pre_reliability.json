@@ -1,0 +1,48 @@
+{
+  "level": "medium",
+  "entropy": 0.047720535406695144,
+  "avg_logprob": -0.033077354571961766,
+  "token_count": 2300,
+  "rationale": "Low entropy indicates confident generation. Lint/type checks surfaced 89 blocking issue(s).",
+  "static": {
+    "syntax_ok": true,
+    "syntax_error": null,
+    "line_count": 242,
+    "function_count": 41,
+    "class_count": 1,
+    "avg_function_length": 3.5853658536585367,
+    "max_function_length": 65,
+    "todo_count": 0,
+    "complexity": 27,
+    "linters": {
+      "pylint": {
+        "available": true,
+        "issue_count": 3,
+        "exit_code": 2,
+        "output": "************* Module attempt_2.test_src\nattempt_2.test_src.py:2:0: E0401: Unable to import 'django.conf' (import-error)\nattempt_2.test_src.py:3:0: E0401: Unable to import 'django.utils.safestring' (import-error)\nattempt_2.test_src.py:4:0: E0401: Unable to import 'django.test' (import-error)\n"
+      },
+      "mypy": {
+        "available": true,
+        "issue_count": 86,
+        "exit_code": 1,
+        "output": "tempt_2.test_src.py:180: error: Function is missing a return type annotation\nattempt_2.test_src.py:180: note: Use \"-> None\" if function does not return a value\nattempt_2.test_src.py:181: error: Call to untyped function \"format\" in typed context\nattempt_2.test_src.py:184: error: Function is missing a return type annotation\nattempt_2.test_src.py:184: note: Use \"-> None\" if function does not return a value\nattempt_2.test_src.py:185: error: Call to untyped function \"format\" in typed context\nattempt_2.test_src.py:188: error: Function is missing a return type annotation\nattempt_2.test_src.py:188: note: Use \"-> None\" if function does not return a value\nattempt_2.test_src.py:189: error: Call to untyped function \"format\" in typed context\nattempt_2.test_src.py:192: error: Function is missing a return type annotation\nattempt_2.test_src.py:192: note: Use \"-> None\" if function does not return a value\nattempt_2.test_src.py:193: error: Call to untyped function \"format\" in typed context\nattempt_2.test_src.py:196: error: Function is missing a return type annotation\nattempt_2.test_src.py:196: note: Use \"-> None\" if function does not return a value\nattempt_2.test_src.py:197: error: Call to untyped function \"format\" in typed context\nattempt_2.test_src.py:200: error: Function is missing a return type annotation\nattempt_2.test_src.py:200: note: Use \"-> None\" if function does not return a value\nattempt_2.test_src.py:201: error: Call to untyped function \"format\" in typed context\nattempt_2.test_src.py:204: error: Function is missing a return type annotation\nattempt_2.test_src.py:204: note: Use \"-> None\" if function does not return a value\nattempt_2.test_src.py:205: error: Call to untyped function \"format\" in typed context\nattempt_2.test_src.py:208: error: Function is missing a return type annotation\nattempt_2.test_src.py:208: note: Use \"-> None\" if function does not return a value\nattempt_2.test_src.py:209: error: Call to untyped function \"format\" in typed context\nattempt_2.test_src.py:212: error: Function is missing a return type annotation\nattempt_2.test_src.py:212: note: Use \"-> None\" if function does not return a value\nattempt_2.test_src.py:213: error: Call to untyped function \"format\" in typed context\nattempt_2.test_src.py:216: error: Function is missing a return type annotation\nattempt_2.test_src.py:216: note: Use \"-> None\" if function does not return a value\nattempt_2.test_src.py:217: error: Call to untyped function \"format\" in typed context\nattempt_2.test_src.py:220: error: Function is missing a return type annotation\nattempt_2.test_src.py:220: note: Use \"-> None\" if function does not return a value\nattempt_2.test_src.py:221: error: Call to untyped function \"format\" in typed context\nattempt_2.test_src.py:224: error: Function is missing a return type annotation\nattempt_2.test_src.py:224: note: Use \"-> None\" if function does not return a value\nattempt_2.test_src.py:225: error: Call to untyped function \"format\" in typed context\nattempt_2.test_src.py:228: error: Function is missing a return type annotation\nattempt_2.test_src.py:228: note: Use \"-> None\" if function does not return a value\nattempt_2.test_src.py:229: error: Call to untyped function \"format\" in typed context\nattempt_2.test_src.py:232: error: Function is missing a return type annotation\nattempt_2.test_src.py:232: note: Use \"-> None\" if function does not return a value\nattempt_2.test_src.py:233: error: Call to untyped function \"format\" in typed context\nattempt_2.test_src.py:236: error: Function is missing a return type annotation\nattempt_2.test_src.py:236: note: Use \"-> None\" if function does not return a value\nattempt_2.test_src.py:237: error: Call to untyped function \"format\" in typed context\nattempt_2.test_src.py:240: error: Function is missing a return type annotation\nattempt_2.test_src.py:240: note: Use \"-> None\" if function does not return a value\nattempt_2.test_src.py:241: error: Call to untyped function \"format\" in typed context\nFound 86 errors in 1 file (checked 1 source file)\n"
+      }
+    }
+  },
+  "lint": {
+    "issues": 89,
+    "missing": [],
+    "reports": {
+      "pylint": {
+        "available": true,
+        "issue_count": 3,
+        "exit_code": 2
+      },
+      "mypy": {
+        "available": true,
+        "issue_count": 86,
+        "exit_code": 1
+      }
+    }
+  }
+}

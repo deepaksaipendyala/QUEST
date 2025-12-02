@@ -1,0 +1,73 @@
+{
+  "compile_error": false,
+  "no_tests": false,
+  "low_coverage": true,
+  "low_mutation": true,
+  "mutation_score": 22.900000000000006,
+  "lint_issue_count": 16,
+  "lint_missing_tools": [],
+  "coverage_delta": 0.0,
+  "mutation_delta": 0.0,
+  "no_progress": false,
+  "missing_lines": [],
+  "instructions": [
+    "Resolve 16 lint/type errors reported by available tools.",
+    "Increase test coverage with more assertions.",
+    "Improve mutation score from 22.90% toward 50.00%.",
+    "Fix 16 lint/type issues noted in reliability analysis.",
+    "Reliability blockers: Coverage below target threshold.; Mutation score below target..",
+    "Fix 16 lint/type issues noted in reliability analysis.",
+    "Address runner error reported: Success.",
+    "PRIORITY: Increase test coverage to meet the target of 90%.",
+    "PRIORITY: Improve mutation score to meet the target of 50%.",
+    "Coverage: Add unit tests for all functions, especially those with complex logic or branches. Focus on functions that currently lack tests.",
+    "Coverage: Identify and cover edge cases for the main function in the class, particularly around input validation and error handling.",
+    "Coverage: Ensure that all branches in conditional statements are tested. Review lines with if-else conditions and add tests for both true and false cases.",
+    "Mutation: Create tests that specifically target edge cases and error conditions to increase the likelihood of killing mutants.",
+    "Mutation: Add tests that modify input parameters to test the boundaries of acceptable values, especially for functions with numerical calculations.",
+    "Mutation: Implement tests that simulate unexpected user behavior or invalid inputs to ensure robustness against mutations.",
+    "Quality: Resolve the 16 lint issues identified to improve code readability and maintainability.",
+    "Quality: Refactor the code to reduce complexity, possibly by breaking down larger functions into smaller, more manageable ones."
+  ],
+  "llm_suggestions": {
+    "priority_issues": [
+      "Increase test coverage to meet the target of 90%.",
+      "Improve mutation score to meet the target of 50%."
+    ],
+    "coverage_suggestions": [
+      "Add unit tests for all functions, especially those with complex logic or branches. Focus on functions that currently lack tests.",
+      "Identify and cover edge cases for the main function in the class, particularly around input validation and error handling.",
+      "Ensure that all branches in conditional statements are tested. Review lines with if-else conditions and add tests for both true and false cases."
+    ],
+    "mutation_suggestions": [
+      "Create tests that specifically target edge cases and error conditions to increase the likelihood of killing mutants.",
+      "Add tests that modify input parameters to test the boundaries of acceptable values, especially for functions with numerical calculations.",
+      "Implement tests that simulate unexpected user behavior or invalid inputs to ensure robustness against mutations."
+    ],
+    "code_quality_suggestions": [
+      "Resolve the 16 lint issues identified to improve code readability and maintainability.",
+      "Refactor the code to reduce complexity, possibly by breaking down larger functions into smaller, more manageable ones.",
+      "Consider using type hints for function parameters and return types to enhance clarity and reduce potential errors."
+    ],
+    "test_strategy_suggestions": [
+      "Adopt a test-driven development (TDD) approach for new features to ensure comprehensive test coverage from the start.",
+      "Implement integration tests to cover interactions between different components of the codebase.",
+      "Regularly review and update test cases to ensure they remain relevant as the codebase evolves."
+    ],
+    "next_steps": [
+      "Identify and write tests for all uncovered functions and branches, focusing on critical paths first.",
+      "Address the lint issues and refactor code to improve overall quality.",
+      "Develop tests targeting edge cases and error conditions to improve mutation score.",
+      "Review and enhance existing tests to ensure they are effective in killing mutants.",
+      "Set up a continuous integration pipeline to automate testing and ensure coverage and mutation scores are monitored regularly."
+    ]
+  },
+  "llm_supervisor_metadata": {
+    "entropy": 0.5846680294568443,
+    "avg_logprob": -0.4052609961815507,
+    "token_count": 430,
+    "input_tokens": 397,
+    "output_tokens": 430,
+    "estimated_cost": 0.00031755
+  }
+}

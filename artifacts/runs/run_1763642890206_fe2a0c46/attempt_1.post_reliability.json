@@ -1,0 +1,33 @@
+{
+  "pre_level": "high",
+  "level": "needs_review",
+  "reasons": [
+    "Coverage below target threshold.",
+    "Mutation score below target."
+  ],
+  "coverage": 53.591160220994475,
+  "target_coverage": 90.0,
+  "mutation_score": 28.97,
+  "target_mutation": 50.0,
+  "success": true,
+  "test_error": "Success",
+  "lint": {
+    "issues": 0,
+    "missing": [
+      "pylint",
+      "mypy"
+    ],
+    "reports": {
+      "pylint": {
+        "available": false,
+        "issue_count": 0,
+        "exit_code": null
+      },
+      "mypy": {
+        "available": false,
+        "issue_count": 0,
+        "exit_code": null
+      }
+    }
+  }
+}

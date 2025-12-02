@@ -22,7 +22,7 @@ class SupervisorAgent:
                 model="gpt-4o-mini",  # Use efficient model for analysis
                 temperature=0.1,      # Low temperature for consistent analysis
                 top_p=0.9,
-                collect_logprobs=False  # Not needed for supervisor analysis
+                collect_logprobs=True  # Enable to get entropy/confidence metrics for supervisor analysis
             )
             
             critique, llm_result = analyze_with_llm(payload, target_cov, target_mut, llm_config)

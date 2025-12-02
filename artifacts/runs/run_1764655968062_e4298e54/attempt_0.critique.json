@@ -1,0 +1,64 @@
+{
+  "compile_error": false,
+  "no_tests": false,
+  "low_coverage": true,
+  "low_mutation": false,
+  "mutation_score": 72.46000000000001,
+  "lint_issue_count": 16,
+  "lint_missing_tools": [],
+  "coverage_delta": 0.0,
+  "mutation_delta": 0.0,
+  "no_progress": false,
+  "missing_lines": [],
+  "instructions": [
+    "Resolve 16 lint/type errors reported by available tools.",
+    "Increase test coverage with more assertions.",
+    "Fix 16 lint/type issues noted in reliability analysis.",
+    "Reliability blockers: Coverage close to target; review before trust..",
+    "Fix 16 lint/type issues noted in reliability analysis.",
+    "Address runner error reported: Success.",
+    "PRIORITY: Address the 16 lint issues to improve code quality and maintainability.",
+    "Coverage: Add unit tests for the 3 uncovered functions to increase coverage: focus on edge cases and error handling.",
+    "Coverage: Review and add tests for any conditional branches in the existing functions that may not be fully exercised.",
+    "Mutation: Create tests that specifically target the mutation points identified in the code, especially around the logic in the main function.",
+    "Mutation: Add tests that cover boundary values and unexpected inputs to ensure robustness against mutations.",
+    "Quality: Refactor the code to reduce complexity; consider breaking down larger functions into smaller, more manageable ones.",
+    "Quality: Ensure consistent naming conventions and remove any unused variables or imports to clean up the code."
+  ],
+  "llm_suggestions": {
+    "priority_issues": [
+      "Address the 16 lint issues to improve code quality and maintainability."
+    ],
+    "coverage_suggestions": [
+      "Add unit tests for the 3 uncovered functions to increase coverage: focus on edge cases and error handling.",
+      "Review and add tests for any conditional branches in the existing functions that may not be fully exercised."
+    ],
+    "mutation_suggestions": [
+      "Create tests that specifically target the mutation points identified in the code, especially around the logic in the main function.",
+      "Add tests that cover boundary values and unexpected inputs to ensure robustness against mutations."
+    ],
+    "code_quality_suggestions": [
+      "Refactor the code to reduce complexity; consider breaking down larger functions into smaller, more manageable ones.",
+      "Ensure consistent naming conventions and remove any unused variables or imports to clean up the code."
+    ],
+    "test_strategy_suggestions": [
+      "Implement property-based testing to explore a wider range of input values and edge cases.",
+      "Consider using a test coverage tool to visualize which lines are not covered and prioritize writing tests for those areas."
+    ],
+    "next_steps": [
+      "Fix the 16 lint issues identified in the static analysis.",
+      "Add unit tests for the uncovered functions and branches to improve coverage to at least 90%.",
+      "Create targeted tests for mutation points to increase the mutation score above 72.46%.",
+      "Refactor the code to improve structure and reduce complexity.",
+      "Review the test strategy and implement property-based testing for critical functions."
+    ]
+  },
+  "llm_supervisor_metadata": {
+    "entropy": 0.5364871072253059,
+    "avg_logprob": -0.37186452577998186,
+    "token_count": 323,
+    "input_tokens": 396,
+    "output_tokens": 323,
+    "estimated_cost": 0.0002532
+  }
+}

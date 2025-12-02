@@ -1,0 +1,48 @@
+{
+  "level": "medium",
+  "entropy": 0.10284824358256967,
+  "avg_logprob": -0.07128897006480069,
+  "token_count": 706,
+  "rationale": "Low entropy indicates confident generation. Lint/type checks surfaced 16 blocking issue(s).",
+  "static": {
+    "syntax_ok": true,
+    "syntax_error": null,
+    "line_count": 70,
+    "function_count": 12,
+    "class_count": 1,
+    "avg_function_length": 3.1666666666666665,
+    "max_function_length": 8,
+    "todo_count": 0,
+    "complexity": 2,
+    "linters": {
+      "pylint": {
+        "available": true,
+        "issue_count": 2,
+        "exit_code": 2,
+        "output": "************* Module attempt_0.test_src\nattempt_0.test_src.py:5:0: E0401: Unable to import 'django.http' (import-error)\nattempt_0.test_src.py:6:0: E0401: Unable to import 'django.views.static' (import-error)\n"
+      },
+      "mypy": {
+        "available": true,
+        "issue_count": 14,
+        "exit_code": 1,
+        "output": "attempt_0.test_src.py:5: error: Cannot find implementation or library stub for module named \"django.http\"\nattempt_0.test_src.py:6: error: Cannot find implementation or library stub for module named \"django.views.static\"\nattempt_0.test_src.py:6: note: See https://mypy.readthedocs.io/en/stable/running_mypy.html#missing-imports\nattempt_0.test_src.py:10: error: Function is missing a return type annotation\nattempt_0.test_src.py:10: note: Use \"-> None\" if function does not return a value\nattempt_0.test_src.py:20: error: Function is missing a return type annotation\nattempt_0.test_src.py:20: note: Use \"-> None\" if function does not return a value\nattempt_0.test_src.py:23: error: Function is missing a return type annotation\nattempt_0.test_src.py:23: note: Use \"-> None\" if function does not return a value\nattempt_0.test_src.py:30: error: Function is missing a return type annotation\nattempt_0.test_src.py:30: note: Use \"-> None\" if function does not return a value\nattempt_0.test_src.py:34: error: Function is missing a return type annotation\nattempt_0.test_src.py:34: note: Use \"-> None\" if function does not return a value\nattempt_0.test_src.py:39: error: Function is missing a return type annotation\nattempt_0.test_src.py:39: note: Use \"-> None\" if function does not return a value\nattempt_0.test_src.py:43: error: Function is missing a return type annotation\nattempt_0.test_src.py:43: note: Use \"-> None\" if function does not return a value\nattempt_0.test_src.py:49: error: Function is missing a return type annotation\nattempt_0.test_src.py:49: note: Use \"-> None\" if function does not return a value\nattempt_0.test_src.py:54: error: Function is missing a return type annotation\nattempt_0.test_src.py:54: note: Use \"-> None\" if function does not return a value\nattempt_0.test_src.py:60: error: Function is missing a return type annotation\nattempt_0.test_src.py:60: note: Use \"-> None\" if function does not return a value\nattempt_0.test_src.py:66: error: Function is missing a return type annotation\nattempt_0.test_src.py:66: note: Use \"-> None\" if function does not return a value\nattempt_0.test_src.py:69: error: Function is missing a return type annotation\nattempt_0.test_src.py:69: note: Use \"-> None\" if function does not return a value\nFound 14 errors in 1 file (checked 1 source file)\n"
+      }
+    }
+  },
+  "lint": {
+    "issues": 16,
+    "missing": [],
+    "reports": {
+      "pylint": {
+        "available": true,
+        "issue_count": 2,
+        "exit_code": 2
+      },
+      "mypy": {
+        "available": true,
+        "issue_count": 14,
+        "exit_code": 1
+      }
+    }
+  }
+}

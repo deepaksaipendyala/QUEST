@@ -1,0 +1,65 @@
+{
+  "compile_error": false,
+  "no_tests": false,
+  "low_coverage": true,
+  "low_mutation": true,
+  "mutation_score": -1.0,
+  "lint_issue_count": 66,
+  "lint_missing_tools": [],
+  "coverage_delta": 0.0,
+  "mutation_delta": 0.0,
+  "no_progress": false,
+  "missing_lines": [],
+  "instructions": [
+    "Resolve 66 lint/type errors reported by available tools.",
+    "Increase test coverage with more assertions.",
+    "Mutation score unavailable; ensure mutation testing runs and improves surviving mutants.",
+    "Fix 66 lint/type issues noted in reliability analysis.",
+    "Reliability blockers: Tests failed to execute successfully..",
+    "Fix 66 lint/type issues noted in reliability analysis.",
+    "Address runner error reported: NameError.",
+    "PRIORITY: Fix the NameError causing test execution failure. Identify the variable or function causing the error and ensure it is defined before use.",
+    "Coverage: Identify and write tests for the 27 functions, focusing on those with no existing tests. Specifically, target edge cases and error handling paths.",
+    "Coverage: Add tests for boundary values in any numerical calculations or data processing functions.",
+    "Mutation: Create tests that cover different input scenarios for the main function in the class, ensuring to include both valid and invalid inputs.",
+    "Mutation: Implement tests that check for exception handling to ensure that the code behaves correctly under failure conditions.",
+    "Quality: Address the 66 lint issues by following PEP 8 guidelines, focusing on naming conventions, line lengths, and spacing.",
+    "Quality: Refactor the single class to potentially break it down into smaller classes or modules if it has multiple responsibilities."
+  ],
+  "llm_suggestions": {
+    "priority_issues": [
+      "Fix the NameError causing test execution failure. Identify the variable or function causing the error and ensure it is defined before use."
+    ],
+    "coverage_suggestions": [
+      "Identify and write tests for the 27 functions, focusing on those with no existing tests. Specifically, target edge cases and error handling paths.",
+      "Add tests for boundary values in any numerical calculations or data processing functions."
+    ],
+    "mutation_suggestions": [
+      "Create tests that cover different input scenarios for the main function in the class, ensuring to include both valid and invalid inputs.",
+      "Implement tests that check for exception handling to ensure that the code behaves correctly under failure conditions."
+    ],
+    "code_quality_suggestions": [
+      "Address the 66 lint issues by following PEP 8 guidelines, focusing on naming conventions, line lengths, and spacing.",
+      "Refactor the single class to potentially break it down into smaller classes or modules if it has multiple responsibilities."
+    ],
+    "test_strategy_suggestions": [
+      "Adopt a test-driven development (TDD) approach for new features to ensure tests are written before the implementation.",
+      "Implement continuous integration (CI) to automatically run tests on each commit, ensuring immediate feedback on test failures."
+    ],
+    "next_steps": [
+      "1. Fix the NameError to allow tests to execute successfully.",
+      "2. Write unit tests for all functions, focusing on those that are currently uncovered.",
+      "3. Address the lint issues to improve code quality and maintainability.",
+      "4. Implement tests for edge cases and error handling to improve mutation score.",
+      "5. Set up a CI pipeline to automate test execution and reporting."
+    ]
+  },
+  "llm_supervisor_metadata": {
+    "entropy": 0.5448835341088516,
+    "avg_logprob": -0.37768448540108907,
+    "token_count": 357,
+    "input_tokens": 390,
+    "output_tokens": 357,
+    "estimated_cost": 0.0002727
+  }
+}

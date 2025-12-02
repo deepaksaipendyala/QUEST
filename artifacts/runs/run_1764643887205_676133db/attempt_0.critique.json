@@ -1,0 +1,65 @@
+{
+  "compile_error": false,
+  "no_tests": false,
+  "low_coverage": true,
+  "low_mutation": true,
+  "mutation_score": -1.0,
+  "lint_issue_count": 21,
+  "lint_missing_tools": [],
+  "coverage_delta": 0.0,
+  "mutation_delta": 0.0,
+  "no_progress": false,
+  "missing_lines": [],
+  "instructions": [
+    "Resolve 21 lint/type errors reported by available tools.",
+    "Increase test coverage with more assertions.",
+    "Mutation score unavailable; ensure mutation testing runs and improves surviving mutants.",
+    "Fix 21 lint/type issues noted in reliability analysis.",
+    "Reliability blockers: Tests failed to execute successfully..",
+    "Fix 21 lint/type issues noted in reliability analysis.",
+    "Address runner error reported: FileNotFoundError.",
+    "PRIORITY: Fix the FileNotFoundError to ensure tests can execute successfully.",
+    "Coverage: Add tests for all functions in the codebase, especially those that are not currently covered. Focus on lines 10-30 where critical logic is implemented.",
+    "Coverage: Create tests that cover edge cases, such as empty inputs and invalid data formats, particularly in the main function that processes input files.",
+    "Mutation: Implement tests that specifically target conditional branches in the code. For example, add tests that check both true and false outcomes for any if statements.",
+    "Mutation: Create tests that simulate unexpected inputs to ensure robustness, such as passing in None or malformed data.",
+    "Quality: Address the 21 lint issues by running a linter and fixing the identified problems, focusing on naming conventions and unused imports.",
+    "Quality: Refactor the code to improve readability, such as breaking down complex functions into smaller, more manageable ones."
+  ],
+  "llm_suggestions": {
+    "priority_issues": [
+      "Fix the FileNotFoundError to ensure tests can execute successfully."
+    ],
+    "coverage_suggestions": [
+      "Add tests for all functions in the codebase, especially those that are not currently covered. Focus on lines 10-30 where critical logic is implemented.",
+      "Create tests that cover edge cases, such as empty inputs and invalid data formats, particularly in the main function that processes input files."
+    ],
+    "mutation_suggestions": [
+      "Implement tests that specifically target conditional branches in the code. For example, add tests that check both true and false outcomes for any if statements.",
+      "Create tests that simulate unexpected inputs to ensure robustness, such as passing in None or malformed data."
+    ],
+    "code_quality_suggestions": [
+      "Address the 21 lint issues by running a linter and fixing the identified problems, focusing on naming conventions and unused imports.",
+      "Refactor the code to improve readability, such as breaking down complex functions into smaller, more manageable ones."
+    ],
+    "test_strategy_suggestions": [
+      "Adopt a test-driven development (TDD) approach for new features to ensure coverage from the start.",
+      "Implement continuous integration (CI) to automatically run tests on every commit, ensuring early detection of issues."
+    ],
+    "next_steps": [
+      "Resolve the FileNotFoundError by checking file paths and ensuring necessary files are present.",
+      "Run a linter to address the 21 lint issues and improve code quality.",
+      "Write unit tests for all functions, focusing on critical logic and edge cases.",
+      "Implement tests that cover conditional branches to improve mutation score.",
+      "Set up a CI pipeline to automate test execution and ensure ongoing reliability."
+    ]
+  },
+  "llm_supervisor_metadata": {
+    "entropy": null,
+    "avg_logprob": null,
+    "token_count": 362,
+    "input_tokens": 392,
+    "output_tokens": 362,
+    "estimated_cost": 0.000276
+  }
+}

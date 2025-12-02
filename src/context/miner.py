@@ -12,7 +12,7 @@ def mine_python_context(repo_root: pathlib.Path, relative_code_file: str) -> Con
         return {"summary": "", "symbols": [], "docstrings": []}
     text = read_file(p)
     try:
-        try_ast = ast.parse(text)
+    try_ast = ast.parse(text)
     except SyntaxError:
         # If file has syntax errors, return empty context
         return {"summary": "SyntaxError in source file", "symbols": [], "docstrings": []}

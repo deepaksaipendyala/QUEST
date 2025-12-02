@@ -1,0 +1,9 @@
+{
+  "entropy": 0.10012473359012129,
+  "avg_logprob": -0.06940117679230813,
+  "token_count": 738,
+  "input_tokens": 2961,
+  "output_tokens": 738,
+  "estimated_cost": 0.00088695,
+  "llm_duration_seconds": 27.533900022506714
+}

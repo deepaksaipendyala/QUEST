@@ -1,0 +1,51 @@
+{
+  "level": "high",
+  "entropy": 0.09551151191037557,
+  "avg_logprob": -0.06620353519169446,
+  "token_count": 658,
+  "rationale": "Low entropy indicates confident generation. Lint/type tools unavailable: pylint, mypy.",
+  "static": {
+    "syntax_ok": true,
+    "syntax_error": null,
+    "line_count": 78,
+    "function_count": 10,
+    "class_count": 1,
+    "avg_function_length": 4.9,
+    "max_function_length": 10,
+    "todo_count": 0,
+    "complexity": 2,
+    "linters": {
+      "pylint": {
+        "available": false,
+        "issue_count": 0,
+        "exit_code": null,
+        "output": ""
+      },
+      "mypy": {
+        "available": false,
+        "issue_count": 0,
+        "exit_code": null,
+        "output": ""
+      }
+    }
+  },
+  "lint": {
+    "issues": 0,
+    "missing": [
+      "pylint",
+      "mypy"
+    ],
+    "reports": {
+      "pylint": {
+        "available": false,
+        "issue_count": 0,
+        "exit_code": null
+      },
+      "mypy": {
+        "available": false,
+        "issue_count": 0,
+        "exit_code": null
+      }
+    }
+  }
+}

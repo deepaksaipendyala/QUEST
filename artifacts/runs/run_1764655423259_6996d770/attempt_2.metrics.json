@@ -1,0 +1,10 @@
+{
+  "attempt": 2,
+  "enhancer_duration_seconds": 37.199394941329956,
+  "runner_duration_seconds": 150.5294291973114,
+  "static_analysis_duration_seconds": 1.096134901046753,
+  "llm_duration_seconds": 0.0,
+  "llm_cost": 0.0011412,
+  "llm_input_tokens": 1592,
+  "llm_output_tokens": 1504
+}

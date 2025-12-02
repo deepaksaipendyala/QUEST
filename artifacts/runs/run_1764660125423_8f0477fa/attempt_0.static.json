@@ -1,0 +1,25 @@
+{
+  "syntax_ok": true,
+  "syntax_error": null,
+  "line_count": 46,
+  "function_count": 7,
+  "class_count": 1,
+  "avg_function_length": 3.4285714285714284,
+  "max_function_length": 5,
+  "todo_count": 0,
+  "complexity": 0,
+  "linters": {
+    "pylint": {
+      "available": true,
+      "issue_count": 4,
+      "exit_code": 2,
+      "output": "************* Module attempt_0.test_src\nattempt_0.test_src.py:4:0: E0401: Unable to import 'django.test' (import-error)\nattempt_0.test_src.py:5:0: E0401: Unable to import 'django.http' (import-error)\nattempt_0.test_src.py:6:0: E0401: Unable to import 'django.views.debug' (import-error)\nattempt_0.test_src.py:42:8: E0401: Unable to import 'django.http' (import-error)\n"
+    },
+    "mypy": {
+      "available": true,
+      "issue_count": 15,
+      "exit_code": 1,
+      "output": "attempt_0.test_src.py:4: error: Cannot find implementation or library stub for module named \"django.test\"\nattempt_0.test_src.py:5: error: Cannot find implementation or library stub for module named \"django.http\"\nattempt_0.test_src.py:6: error: Cannot find implementation or library stub for module named \"django.views.debug\"\nattempt_0.test_src.py:6: note: See https://mypy.readthedocs.io/en/stable/running_mypy.html#missing-imports\nattempt_0.test_src.py:8: error: Class cannot subclass \"SimpleTestCase\" (has type \"Any\")\nattempt_0.test_src.py:10: error: Function is missing a return type annotation\nattempt_0.test_src.py:10: note: Use \"-> None\" if function does not return a value\nattempt_0.test_src.py:14: error: Function is missing a return type annotation\nattempt_0.test_src.py:14: note: Use \"-> None\" if function does not return a value\nattempt_0.test_src.py:17: error: Function is missing a return type annotation\nattempt_0.test_src.py:17: note: Use \"-> None\" if function does not return a value\nattempt_0.test_src.py:20: error: Call to untyped function \"create_mock_request\" in typed context\nattempt_0.test_src.py:24: error: Function is missing a return type annotation\nattempt_0.test_src.py:24: note: Use \"-> None\" if function does not return a value\nattempt_0.test_src.py:25: error: Call to untyped function \"create_mock_request\" in typed context\nattempt_0.test_src.py:29: error: Function is missing a return type annotation\nattempt_0.test_src.py:29: note: Use \"-> None\" if function does not return a value\nattempt_0.test_src.py:32: error: Call to untyped function \"create_mock_request\" in typed context\nattempt_0.test_src.py:36: error: Function is missing a return type annotation\nattempt_0.test_src.py:36: note: Use \"-> None\" if function does not return a value\nattempt_0.test_src.py:37: error: Call to untyped function \"create_mock_request\" in typed context\nattempt_0.test_src.py:41: error: Function is missing a type annotation\nFound 15 errors in 1 file (checked 1 source file)\n"
+    }
+  }
+}

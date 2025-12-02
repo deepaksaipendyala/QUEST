@@ -35,6 +35,39 @@ Includes:
 
 ---
 
+## Guides and Examples
+
+### **END_TO_END_GUIDE.md** (5.5K)
+Quick reference for running the complete pipeline.
+
+**Use this**: To run your first orchestrator pipeline.
+
+### **END_TO_END_EXAMPLE.md** (25K) - DETAILED WALKTHROUGH
+Complete walkthrough of a real orchestrator run with all artifacts explained.
+
+**Read this**: To understand exactly what happens during a run.
+
+Includes:
+- Step-by-step pipeline execution
+- All artifact files with example contents
+- LLM prompts and responses
+- Coverage progression (44% -> 92%)
+- Reliability scoring examples
+- Cost breakdown and metrics
+- Supervisor critique examples
+
+### **AGENT_PROMPTS_AND_FLOW.md** (12K)
+Detailed documentation of all agent prompts and system flow.
+
+**Read this**: To understand agent interactions and prompt engineering.
+
+### **LLM_SUPERVISOR_IMPLEMENTATION.md** (8K)
+Documentation of the LLM-enhanced supervisor feature.
+
+**Read this**: To understand intelligent test analysis.
+
+---
+
 ## Setup and Operations
 
 ### **README.md** (3.0K)
@@ -139,26 +172,36 @@ Includes:
 ### For New Users
 1. **README.md** - Understand what the system does
 2. **SETUP_SUMMARY.md** - Set up the environment
-3. **VERIFICATION_REPORT.md** - Verify it's working
-4. **Project.md** - Understand the research goals
+3. **END_TO_END_GUIDE.md** - Run your first pipeline
+4. **END_TO_END_EXAMPLE.md** - See what happens step-by-step
+5. **Project.md** - Understand the research goals
 
 ### For Developers
 1. **PROJECT_STATUS.md** - See what's implemented
-2. **CODE_REVIEW.md** - Understand code quality
-3. **IMPLEMENTATION_SUMMARY.md** - Prioritize work
-4. **Project.md** - Understand requirements
+2. **END_TO_END_EXAMPLE.md** - Understand data flow and artifacts
+3. **AGENT_PROMPTS_AND_FLOW.md** - Agent interactions
+4. **CODE_REVIEW.md** - Understand code quality
+5. **Project.md** - Understand requirements
 
 ### For Researchers
 1. **Project.md** - Research questions and goals
-2. **PROJECT_STATUS.md** - Readiness for each RQ
-3. **IMPLEMENTATION_SUMMARY.md** - Timeline to completion
-4. **FULL_TEST_RESULTS.md** - Current performance
+2. **END_TO_END_EXAMPLE.md** - Detailed run walkthrough with metrics
+3. **PROJECT_STATUS.md** - Readiness for each RQ
+4. **IMPLEMENTATION_SUMMARY.md** - Timeline to completion
+5. **FULL_TEST_RESULTS.md** - Current performance
+
+### For Paper Writing
+1. **Project.md** - Problem statement and motivation
+2. **END_TO_END_EXAMPLE.md** - Concrete example for methodology section
+3. **AGENT_PROMPTS_AND_FLOW.md** - System design details
+4. **LLM_SUPERVISOR_IMPLEMENTATION.md** - Novel contribution documentation
 
 ### For System Operators
 1. **README.md** - Basic commands
 2. **SETUP_SUMMARY.md** - Setup procedures
-3. **start_runner.sh**, **stop_runner.sh** - Operations
-4. **VERIFICATION_REPORT.md** - Troubleshooting
+3. **END_TO_END_GUIDE.md** - Running pipelines
+4. **start_runner.sh**, **stop_runner.sh** - Operations
+5. **VERIFICATION_REPORT.md** - Troubleshooting
 
 ---
 
@@ -192,8 +235,13 @@ Includes:
 
 ## File Size Reference
 ```
+END_TO_END_EXAMPLE.md      25K  - Detailed run walkthrough
 PROJECT_STATUS.md          18K  - Most comprehensive
+AGENT_PROMPTS_AND_FLOW.md  12K  - Agent prompts and flow
+Project.md                 9.4K - Original spec
+LLM_SUPERVISOR_IMPLEMENTATION.md 8K - LLM supervisor
 IMPLEMENTATION_SUMMARY.md  6.7K - Quick overview
+END_TO_END_GUIDE.md        5.5K - Quick pipeline guide
 CODE_REVIEW.md             5.0K - Quality review
 FIXES_APPLIED.md           4.2K - Applied fixes
 VERIFICATION_REPORT.md     3.7K - Verification
@@ -202,7 +250,6 @@ SETUP_SUMMARY.md           2.9K - Setup guide
 FULL_TEST_RESULTS.md       1.9K - Test results
 TEST_RESULTS.md            1.4K - API tests
 ITERATE_PIPELINE_TEST.md   1.3K - Pipeline tests
-Project.md                 9.4K - Original spec
 ```
 
 ---
@@ -210,13 +257,16 @@ Project.md                 9.4K - Original spec
 ## Quick Navigation
 
 Need to know...
-- **How to run it?** → README.md
+- **How to run it?** → README.md or END_TO_END_GUIDE.md
+- **What happens during a run?** → END_TO_END_EXAMPLE.md
 - **What's implemented?** → PROJECT_STATUS.md or IMPLEMENTATION_SUMMARY.md
 - **What's missing?** → PROJECT_STATUS.md section 7
 - **Is it safe?** → VERIFICATION_REPORT.md and CODE_REVIEW.md
 - **How to advance it?** → PROJECT_STATUS.md section 13
 - **Research questions?** → Project.md and PROJECT_STATUS.md section 5
 - **Current performance?** → FULL_TEST_RESULTS.md
+- **Agent prompts?** → AGENT_PROMPTS_AND_FLOW.md
+- **LLM Supervisor?** → LLM_SUPERVISOR_IMPLEMENTATION.md
 
 ---
 

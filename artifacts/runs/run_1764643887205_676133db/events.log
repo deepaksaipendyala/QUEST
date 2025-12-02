@@ -1,0 +1,2 @@
+t=1764643920281 run=run_1764643887205_676133db attempt=0 state=RUN status=failed cov=0.00
+t=1764644003585 run=run_1764643887205_676133db attempt=1 state=RUN status=success cov=50.79

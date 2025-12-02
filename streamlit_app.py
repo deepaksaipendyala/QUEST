@@ -5,6 +5,7 @@ import time
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
+import altair as alt
 import pandas as pd
 import streamlit as st
 
@@ -90,11 +91,119 @@ def _build_runs_table(summaries: List[Dict[str, Any]]) -> pd.DataFrame:
     return df
 
 
+def _line_chart_int_x(
+    df: pd.DataFrame,
+    y_columns: List[str],
+    x_label: str,
+    y_label: str,
+    *,
+    height: int = 260,
+) -> None:
+    """Render a line chart with integer x-axis (1, 2, 3, ...) using Altair."""
+    if df is None or df.empty:
+        return
+
+    data = df[y_columns].copy()
+    # Bring index (experiment / iteration number) into a column
+    data = data.reset_index()
+    # Rename index column to a consistent name for plotting
+    index_col = data.columns[0]
+    data = data.rename(columns={index_col: "iteration"})
+
+    # Long-form for Altair: iteration, metric, value
+    data_long = data.melt(
+        id_vars=["iteration"],
+        value_vars=y_columns,
+        var_name="metric",
+        value_name="value",
+    )
+
+    chart = (
+        alt.Chart(data_long)
+        .mark_line(point=True)
+        .encode(
+            x=alt.X(
+                "iteration:O",
+                axis=alt.Axis(title=x_label, labelAngle=0),  # integer experiment/iteration numbers
+            ),
+            y=alt.Y("value:Q", title=y_label),
+            color=alt.Color("metric:N", title="Metric"),
+        )
+        .properties(height=height)
+    )
+    st.altair_chart(chart, width="stretch")
+
+
+def _build_experiments_comparison(summaries: List[Dict[str, Any]], limit: int = 10) -> pd.DataFrame:
+    """Build comparison data across recent experiments with coverage, mutation, entropy, avg_logprob."""
+    rows = []
+    for summary in summaries[:limit]:
+        run_id = summary.get("run_id", "")
+        
+        # Get best metrics from summary
+        coverage = summary.get("coverage")
+        mutation = summary.get("mutation_score")
+        
+        # Try to load run detail to get LLM confidence metrics
+        entropy_values = []
+        logprob_values = []
+        
+        try:
+            detail = load_run_detail(run_id)
+            iterations = detail.get("iterations", [])
+            
+            # Collect entropy and avg_logprob from all iterations
+            for record in iterations:
+                # Check enhancer LLM metadata
+                llm_meta = record.get("llm_metadata")
+                if llm_meta:
+                    ent = llm_meta.get("entropy")
+                    lp = llm_meta.get("avg_logprob")
+                    if ent is not None:
+                        entropy_values.append(ent)
+                    if lp is not None:
+                        logprob_values.append(lp)
+                
+                # Check supervisor LLM metadata (if available)
+                supervisor_meta = record.get("supervisor_llm_metadata")
+                if supervisor_meta:
+                    ent = supervisor_meta.get("entropy")
+                    lp = supervisor_meta.get("avg_logprob")
+                    if ent is not None:
+                        entropy_values.append(ent)
+                    if lp is not None:
+                        logprob_values.append(lp)
+            
+            # Use average if multiple values, otherwise use the value
+            entropy = sum(entropy_values) / len(entropy_values) if entropy_values else None
+            avg_logprob = sum(logprob_values) / len(logprob_values) if logprob_values else None
+        except (FileNotFoundError, KeyError, AttributeError, ZeroDivisionError):
+            entropy = None
+            avg_logprob = None
+        
+        rows.append({
+            "Run": run_id[:20] + "..." if len(run_id) > 20 else run_id,
+            "Run ID": run_id,
+            "Coverage": float(coverage) if coverage is not None and coverage >= 0 else None,
+            "Mutation": float(mutation) if mutation is not None and mutation >= 0 else None,
+            "Entropy": float(entropy) if entropy is not None else None,
+            "Avg LogProb": float(avg_logprob) if avg_logprob is not None else None,
+        })
+    
+    df = pd.DataFrame(rows)
+    return df
+
+
 def _build_history_chart(history: List[Dict[str, Any]]) -> pd.DataFrame:
     df = pd.DataFrame(history)
     if df.empty:
         return df
-    df = df.set_index("index")
+    # Ensure records are ordered by original index if present
+    if "index" in df.columns:
+        df = df.sort_values("index")
+    # Use a clean integer index 1..N so x-axis is experiment/iteration number
+    df.insert(0, "experiment", range(1, len(df) + 1))
+    df = df.set_index("experiment")
     # Include all metrics: coverage, mutation, entropy, avg_logprob
     chart_cols = ["coverage", "mutation_score", "entropy", "avg_logprob"]
     available_cols = [col for col in chart_cols if col in df.columns]
@@ -157,11 +266,15 @@ def _render_iteration_details(records: List[Dict[str, Any]]) -> None:
                 supervisor_meta = record["supervisor_llm_metadata"]
                 col1, col2, col3 = st.columns(3)
                 with col1:
-                    st.metric("Entropy", f"{supervisor_meta.get('entropy', 0):.3f}")
+                    entropy = supervisor_meta.get('entropy')
+                    entropy_val = f"{entropy:.3f}" if entropy is not None else "N/A"
+                    st.metric("Entropy", entropy_val)
                 with col2:
-                    st.metric("Avg LogProb", f"{supervisor_meta.get('avg_logprob', 0):.3f}")
+                    avg_logprob = supervisor_meta.get('avg_logprob')
+                    logprob_val = f"{avg_logprob:.3f}" if avg_logprob is not None else "N/A"
+                    st.metric("Avg LogProb", logprob_val)
                 with col3:
-                    cost = supervisor_meta.get('estimated_cost', 0)
+                    cost = supervisor_meta.get('estimated_cost', 0) or 0
                     st.metric("Cost", _format_cost(cost))
                 
                 with st.expander("Full supervisor LLM metadata"):
@@ -272,6 +385,88 @@ def main() -> None:
     st.subheader("Recent runs")
     st.dataframe(runs_df, width='stretch', hide_index=True)
 
+    # Experiments comparison plot
+    st.subheader("Experiments Comparison: Coverage, Mutation & LLM Confidence")
+    comparison_df = _build_experiments_comparison(summaries, limit=min(10, len(summaries)))
+    
+    if not comparison_df.empty:
+        # Filter out runs with no valid data
+        comparison_df_filtered = comparison_df[
+            (comparison_df["Coverage"].notna()) | 
+            (comparison_df["Mutation"].notna()) |
+            (comparison_df["Entropy"].notna()) |
+            (comparison_df["Avg LogProb"].notna())
+        ].copy()
+        
+        if not comparison_df_filtered.empty:
+            # Set Run as index for charting
+            comparison_df_filtered = comparison_df_filtered.set_index("Run")
+            
+            # Create two vertically stacked plots with same x-axis (experiment numbers)
+            st.markdown("**All Metrics Comparison: Coverage, Mutation, Entropy, Avg LogProb**")
+            st.caption("Metrics across recent experiments | X-axis: Experiment Number (1, 2, 3, ...)")
+            
+            # Reset index to get experiment numbers (1, 2, 3, ...)
+            chart_data = comparison_df_filtered.reset_index(drop=True)
+            chart_data["Experiment"] = chart_data.index + 1
+            chart_data = chart_data.set_index("Experiment")
+            
+            # Top plot: Coverage & Mutation
+            st.markdown("**Coverage & Mutation Score (%)**")
+            coverage_mutation_cols = ["Coverage", "Mutation"]
+            available_cols = [col for col in coverage_mutation_cols if col in chart_data.columns]
+            if available_cols:
+                chart_data_cm = chart_data[available_cols].dropna(how='all')
+                if not chart_data_cm.empty:
+                    _line_chart_int_x(
+                        chart_data_cm,
+                        ["Coverage", "Mutation"],
+                        x_label="Experiment Number",
+                        y_label="Percentage (%)",
+                        height=300,
+                    )
+                else:
+                    st.info("No coverage/mutation data available")
+            else:
+                st.info("No coverage/mutation data available")
+            
+            # Bottom plot: LLM Confidence Metrics
+            st.markdown("**LLM Confidence Metrics**")
+            st.caption("Lower entropy = more confident | Higher abs(logprob) = more confident")
+            confidence_df = pd.DataFrame()
+            if "Entropy" in chart_data.columns and "Avg LogProb" in chart_data.columns:
+                confidence_df = chart_data[["Entropy", "Avg LogProb"]].copy()
+                # Drop rows where both are None/NaN
+                confidence_df = confidence_df.dropna(how="all")
+                if not confidence_df.empty:
+                    # Use same transformation as individual experiment graph
+                    # (lower entropy = more confident, higher abs(logprob) = more confident)
+                    if "Avg LogProb" in confidence_df.columns:
+                        confidence_df["logprob_confidence"] = confidence_df["Avg LogProb"].abs()
+                        confidence_df = confidence_df[["Entropy", "logprob_confidence"]].rename(
+                            columns={"logprob_confidence": "avg_logprob (abs)"}
+                        )
+                    _line_chart_int_x(
+                        confidence_df,
+                        ["Entropy", "avg_logprob (abs)"],
+                        x_label="Experiment Number",
+                        y_label="Confidence Score",
+                        height=300,
+                    )
+                else:
+                    st.info("No LLM confidence data")
+            else:
+                st.info("No LLM confidence data (entropy/logprob)")
+            
+            # Show data table
+            with st.expander("View comparison data table"):
+                display_df = comparison_df[["Run", "Coverage", "Mutation", "Entropy", "Avg LogProb"]].copy()
+                st.dataframe(display_df, width='stretch', hide_index=True)
+        else:
+            st.info("No valid metrics available in recent experiments for comparison.")
+    else:
+        st.info("No experiments data available for comparison.")
+
     run_options = [summary["run_id"] for summary in summaries]
     selected_run = sidebar.selectbox("Focused run", run_options, index=0)
 
@@ -311,7 +506,13 @@ def main() -> None:
                 coverage_mutation_df = coverage_mutation_df[coverage_mutation_df["coverage"] >= 0]
                 coverage_mutation_df = coverage_mutation_df[coverage_mutation_df["mutation_score"] >= 0]
                 if not coverage_mutation_df.empty:
-                    st.line_chart(coverage_mutation_df, height=260)
+                    _line_chart_int_x(
+                        coverage_mutation_df,
+                        ["coverage", "mutation_score"],
+                        x_label="Iteration Number",
+                        y_label="Percentage (%)",
+                        height=260,
+                    )
                 else:
                     st.info("No valid coverage/mutation data")
             else:
@@ -333,7 +534,13 @@ def main() -> None:
                         confidence_df = confidence_df[["entropy", "logprob_confidence"]].rename(
                             columns={"logprob_confidence": "avg_logprob (abs)"}
                         )
-                    st.line_chart(confidence_df, height=260)
+                    _line_chart_int_x(
+                        confidence_df,
+                        ["entropy", "avg_logprob (abs)"],
+                        x_label="Iteration Number",
+                        y_label="Confidence Score",
+                        height=260,
+                    )
                 else:
                     st.info("No LLM confidence data")
             else:

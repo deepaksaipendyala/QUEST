@@ -1,0 +1,25 @@
+{
+  "syntax_ok": true,
+  "syntax_error": null,
+  "line_count": 88,
+  "function_count": 11,
+  "class_count": 1,
+  "avg_function_length": 5.090909090909091,
+  "max_function_length": 10,
+  "todo_count": 0,
+  "complexity": 4,
+  "linters": {
+    "pylint": {
+      "available": true,
+      "issue_count": 2,
+      "exit_code": 2,
+      "output": "************* Module attempt_0.test_src\nattempt_0.test_src.py:4:0: E0401: Unable to import 'django.core.exceptions' (import-error)\nattempt_0.test_src.py:5:0: E0401: Unable to import 'django.db.models.query_utils' (import-error)\nattempt_0.test_src.py:41:19: E0602: Undefined variable 'DeferredAttribute' (undefined-variable)\n"
+    },
+    "mypy": {
+      "available": true,
+      "issue_count": 14,
+      "exit_code": 1,
+      "output": "attempt_0.test_src.py:4: error: Cannot find implementation or library stub for module named \"django.core.exceptions\"\nattempt_0.test_src.py:5: error: Cannot find implementation or library stub for module named \"django.db.models.query_utils\"\nattempt_0.test_src.py:5: note: See https://mypy.readthedocs.io/en/stable/running_mypy.html#missing-imports\nattempt_0.test_src.py:9: error: Function is missing a return type annotation\nattempt_0.test_src.py:9: note: Use \"-> None\" if function does not return a value\nattempt_0.test_src.py:16: error: Function is missing a return type annotation\nattempt_0.test_src.py:16: note: Use \"-> None\" if function does not return a value\nattempt_0.test_src.py:23: error: Function is missing a return type annotation\nattempt_0.test_src.py:23: note: Use \"-> None\" if function does not return a value\nattempt_0.test_src.py:29: error: Function is missing a return type annotation\nattempt_0.test_src.py:29: note: Use \"-> None\" if function does not return a value\nattempt_0.test_src.py:36: error: Function is missing a return type annotation\nattempt_0.test_src.py:36: note: Use \"-> None\" if function does not return a value\nattempt_0.test_src.py:41: error: Name \"DeferredAttribute\" is not defined\nattempt_0.test_src.py:48: error: Function is missing a return type annotation\nattempt_0.test_src.py:48: note: Use \"-> None\" if function does not return a value\nattempt_0.test_src.py:58: error: Function is missing a return type annotation\nattempt_0.test_src.py:58: note: Use \"-> None\" if function does not return a value\nattempt_0.test_src.py:68: error: Function is missing a return type annotation\nattempt_0.test_src.py:68: note: Use \"-> None\" if function does not return a value\nattempt_0.test_src.py:72: error: Function is missing a return type annotation\nattempt_0.test_src.py:72: note: Use \"-> None\" if function does not return a value\nattempt_0.test_src.py:76: error: Function is missing a return type annotation\nattempt_0.test_src.py:76: note: Use \"-> None\" if function does not return a value\nattempt_0.test_src.py:81: error: Function is missing a return type annotation\nattempt_0.test_src.py:81: note: Use \"-> None\" if function does not return a value\nFound 14 errors in 1 file (checked 1 source file)\n"
+    }
+  }
+}

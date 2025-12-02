@@ -1,0 +1,73 @@
+{
+  "compile_error": false,
+  "no_tests": false,
+  "low_coverage": true,
+  "low_mutation": true,
+  "mutation_score": 29.909999999999997,
+  "lint_issue_count": 15,
+  "lint_missing_tools": [],
+  "coverage_delta": 2.209944751381215,
+  "mutation_delta": 0.9399999999999977,
+  "no_progress": false,
+  "missing_lines": [],
+  "instructions": [
+    "Resolve 15 lint/type errors reported by available tools.",
+    "Increase test coverage with more assertions.",
+    "Improve mutation score from 29.91% toward 50.00%.",
+    "Fix 15 lint/type issues noted in reliability analysis.",
+    "Reliability blockers: Coverage below target threshold.; Mutation score below target..",
+    "Fix 15 lint/type issues noted in reliability analysis.",
+    "Address runner error reported: Success.",
+    "PRIORITY: Increase test coverage to meet the target of 90%.",
+    "PRIORITY: Improve mutation score to meet the target of 50%.",
+    "Coverage: Add unit tests for all functions in the codebase, especially for the 11 functions identified.",
+    "Coverage: Focus on edge cases for functions that handle user input or external data.",
+    "Coverage: Identify and write tests for any conditional branches that are not currently covered, particularly in complex functions.",
+    "Mutation: Create tests that specifically target the logic in the main function to ensure all branches are executed.",
+    "Mutation: Add tests that simulate invalid inputs to check how the code handles exceptions and edge cases.",
+    "Mutation: Implement tests that cover scenarios where the output is dependent on multiple conditions to increase the mutation score.",
+    "Quality: Resolve the 15 lint issues identified to improve code readability and maintainability.",
+    "Quality: Refactor the single class to potentially break it down into smaller classes if it has multiple responsibilities."
+  ],
+  "llm_suggestions": {
+    "priority_issues": [
+      "Increase test coverage to meet the target of 90%.",
+      "Improve mutation score to meet the target of 50%."
+    ],
+    "coverage_suggestions": [
+      "Add unit tests for all functions in the codebase, especially for the 11 functions identified.",
+      "Focus on edge cases for functions that handle user input or external data.",
+      "Identify and write tests for any conditional branches that are not currently covered, particularly in complex functions."
+    ],
+    "mutation_suggestions": [
+      "Create tests that specifically target the logic in the main function to ensure all branches are executed.",
+      "Add tests that simulate invalid inputs to check how the code handles exceptions and edge cases.",
+      "Implement tests that cover scenarios where the output is dependent on multiple conditions to increase the mutation score."
+    ],
+    "code_quality_suggestions": [
+      "Resolve the 15 lint issues identified to improve code readability and maintainability.",
+      "Refactor the single class to potentially break it down into smaller classes if it has multiple responsibilities.",
+      "Review the complexity of functions and aim to reduce it by simplifying logic or breaking down large functions."
+    ],
+    "test_strategy_suggestions": [
+      "Adopt a test-driven development (TDD) approach for new features to ensure coverage is built in from the start.",
+      "Implement integration tests to cover interactions between components, which can help improve overall coverage.",
+      "Regularly review and update tests to ensure they remain relevant as the codebase evolves."
+    ],
+    "next_steps": [
+      "Identify and write tests for the uncovered branches and edge cases in the existing functions.",
+      "Resolve lint issues and refactor code to improve structure and readability.",
+      "Run mutation testing to identify specific areas where tests can be improved to kill more mutants.",
+      "Review and enhance existing tests to ensure they cover all critical paths and edge cases.",
+      "Establish a regular review process for test coverage and mutation scores to track improvements over time."
+    ]
+  },
+  "llm_supervisor_metadata": {
+    "entropy": 0.5881644359494889,
+    "avg_logprob": -0.40768452048401843,
+    "token_count": 415,
+    "input_tokens": 397,
+    "output_tokens": 415,
+    "estimated_cost": 0.00030855
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "pre_level": "medium",
+  "level": "needs_review",
+  "reasons": [
+    "Coverage close to target; review before trust."
+  ],
+  "coverage": 77.77777777777777,
+  "target_coverage": 90.0,
+  "mutation_score": 65.22,
+  "target_mutation": 50.0,
+  "success": true,
+  "test_error": "Success",
+  "lint": {
+    "issues": 20,
+    "missing": [],
+    "reports": {
+      "pylint": {
+        "available": true,
+        "issue_count": 2,
+        "exit_code": 2
+      },
+      "mypy": {
+        "available": true,
+        "issue_count": 18,
+        "exit_code": 1
+      }
+    }
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "syntax_ok": true,
+  "syntax_error": null,
+  "line_count": 138,
+  "function_count": 15,
+  "class_count": 1,
+  "avg_function_length": 6.866666666666666,
+  "max_function_length": 17,
+  "todo_count": 0,
+  "complexity": 1,
+  "linters": {
+    "pylint": {
+      "available": false,
+      "issue_count": 0,
+      "exit_code": null,
+      "output": ""
+    },
+    "mypy": {
+      "available": false,
+      "issue_count": 0,
+      "exit_code": null,
+      "output": ""
+    }
+  }
+}

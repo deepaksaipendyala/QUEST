@@ -1,0 +1,73 @@
+{
+  "compile_error": false,
+  "no_tests": false,
+  "low_coverage": true,
+  "low_mutation": true,
+  "mutation_score": 28.97,
+  "lint_issue_count": 15,
+  "lint_missing_tools": [],
+  "coverage_delta": 1.6574585635359114,
+  "mutation_delta": 4.200000000000003,
+  "no_progress": false,
+  "missing_lines": [],
+  "instructions": [
+    "Resolve 15 lint/type errors reported by available tools.",
+    "Increase test coverage with more assertions.",
+    "Improve mutation score from 28.97% toward 50.00%.",
+    "Fix 15 lint/type issues noted in reliability analysis.",
+    "Reliability blockers: Coverage below target threshold.; Mutation score below target..",
+    "Fix 15 lint/type issues noted in reliability analysis.",
+    "Address runner error reported: Success.",
+    "PRIORITY: Increase test coverage to meet the target of 90%.",
+    "PRIORITY: Improve mutation score to meet the target of 50%.",
+    "Coverage: Add unit tests for all functions in the codebase, especially those with complex logic.",
+    "Coverage: Identify and cover edge cases in the existing tests, particularly for functions that handle user input or external data.",
+    "Coverage: Ensure that all branches in conditional statements are tested, especially in the main class methods.",
+    "Mutation: Create tests that specifically target the logic in the main class to ensure that all mutants are killed.",
+    "Mutation: Add tests for error handling scenarios, such as invalid inputs or exceptions, to improve mutation score.",
+    "Mutation: Focus on testing the boundaries of input values to ensure that edge cases are covered.",
+    "Quality: Resolve the 15 lint issues identified, focusing on code style and best practices.",
+    "Quality: Refactor complex functions to reduce their complexity and improve readability."
+  ],
+  "llm_suggestions": {
+    "priority_issues": [
+      "Increase test coverage to meet the target of 90%.",
+      "Improve mutation score to meet the target of 50%."
+    ],
+    "coverage_suggestions": [
+      "Add unit tests for all functions in the codebase, especially those with complex logic.",
+      "Identify and cover edge cases in the existing tests, particularly for functions that handle user input or external data.",
+      "Ensure that all branches in conditional statements are tested, especially in the main class methods."
+    ],
+    "mutation_suggestions": [
+      "Create tests that specifically target the logic in the main class to ensure that all mutants are killed.",
+      "Add tests for error handling scenarios, such as invalid inputs or exceptions, to improve mutation score.",
+      "Focus on testing the boundaries of input values to ensure that edge cases are covered."
+    ],
+    "code_quality_suggestions": [
+      "Resolve the 15 lint issues identified, focusing on code style and best practices.",
+      "Refactor complex functions to reduce their complexity and improve readability.",
+      "Consider breaking down the single class into smaller, more manageable classes to enhance maintainability."
+    ],
+    "test_strategy_suggestions": [
+      "Implement a test-driven development (TDD) approach for new features to ensure high coverage from the start.",
+      "Regularly review and update tests to align with code changes and ensure they remain effective.",
+      "Incorporate property-based testing to cover a wider range of input scenarios."
+    ],
+    "next_steps": [
+      "Identify specific lines/functions that are not covered and write tests for them.",
+      "Address the lint issues and refactor the code to improve quality.",
+      "Develop additional tests targeting edge cases and error conditions.",
+      "Review and enhance the existing test suite to ensure it meets coverage and mutation targets.",
+      "Set up a continuous integration pipeline to automatically run tests and check coverage after each commit."
+    ]
+  },
+  "llm_supervisor_metadata": {
+    "entropy": 0.5421085971055537,
+    "avg_logprob": -0.37576104564102175,
+    "token_count": 396,
+    "input_tokens": 397,
+    "output_tokens": 396,
+    "estimated_cost": 0.00029715
+  }
+}

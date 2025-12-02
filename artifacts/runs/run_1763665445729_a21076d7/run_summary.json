@@ -1,0 +1,11 @@
+{
+  "run_id": "run_1763665445729_a21076d7",
+  "total_duration_seconds": 454.7571210861206,
+  "iterations": 3,
+  "total_llm_cost": 2.2011e-06,
+  "total_llm_input_tokens": 3614,
+  "total_llm_output_tokens": 2765,
+  "total_llm_duration_seconds": 65.03635215759277,
+  "total_runner_duration_seconds": 383.64704418182373,
+  "total_static_analysis_duration_seconds": 6.014538049697876
+}

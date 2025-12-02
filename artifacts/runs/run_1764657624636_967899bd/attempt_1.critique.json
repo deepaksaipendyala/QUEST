@@ -1,0 +1,73 @@
+{
+  "compile_error": false,
+  "no_tests": false,
+  "low_coverage": true,
+  "low_mutation": true,
+  "mutation_score": 2.450000000000003,
+  "lint_issue_count": 42,
+  "lint_missing_tools": [],
+  "coverage_delta": 45.378151260504204,
+  "mutation_delta": 0.0,
+  "no_progress": false,
+  "missing_lines": [],
+  "instructions": [
+    "Resolve 42 lint/type errors reported by available tools.",
+    "Increase test coverage with more assertions.",
+    "Improve mutation score from 2.45% toward 50.00%.",
+    "Fix 42 lint/type issues noted in reliability analysis.",
+    "Reliability blockers: Coverage below target threshold.; Mutation score below target..",
+    "Fix 42 lint/type issues noted in reliability analysis.",
+    "Address runner error reported: Success.",
+    "PRIORITY: Increase test coverage to meet the target of 90%.",
+    "PRIORITY: Improve mutation score to meet the target of 50%.",
+    "Coverage: Identify and write tests for the 55.38% of code that is currently not covered. Focus on critical functions that handle edge cases.",
+    "Coverage: Add unit tests for all functions in the codebase, especially those with complex logic or conditional branches.",
+    "Coverage: Ensure that all branches in conditional statements are tested. For example, if there are any if-else statements, create tests that cover both the true and false conditions.",
+    "Mutation: Create tests that specifically target edge cases and error conditions to increase the mutation score. For instance, if there are functions that handle user input, test with invalid inputs.",
+    "Mutation: Add tests that assert the expected behavior when exceptions are raised. This will help in killing mutants that are designed to bypass error handling.",
+    "Mutation: Review the existing tests to ensure they are robust enough to catch mutations. Consider using mutation testing tools to identify weak spots.",
+    "Quality: Address the 42 lint issues identified. Focus on the most critical ones that could lead to runtime errors or affect readability.",
+    "Quality: Refactor the code to improve structure. Consider breaking down the single class into multiple classes if it handles multiple responsibilities."
+  ],
+  "llm_suggestions": {
+    "priority_issues": [
+      "Increase test coverage to meet the target of 90%.",
+      "Improve mutation score to meet the target of 50%."
+    ],
+    "coverage_suggestions": [
+      "Identify and write tests for the 55.38% of code that is currently not covered. Focus on critical functions that handle edge cases.",
+      "Add unit tests for all functions in the codebase, especially those with complex logic or conditional branches.",
+      "Ensure that all branches in conditional statements are tested. For example, if there are any if-else statements, create tests that cover both the true and false conditions."
+    ],
+    "mutation_suggestions": [
+      "Create tests that specifically target edge cases and error conditions to increase the mutation score. For instance, if there are functions that handle user input, test with invalid inputs.",
+      "Add tests that assert the expected behavior when exceptions are raised. This will help in killing mutants that are designed to bypass error handling.",
+      "Review the existing tests to ensure they are robust enough to catch mutations. Consider using mutation testing tools to identify weak spots."
+    ],
+    "code_quality_suggestions": [
+      "Address the 42 lint issues identified. Focus on the most critical ones that could lead to runtime errors or affect readability.",
+      "Refactor the code to improve structure. Consider breaking down the single class into multiple classes if it handles multiple responsibilities.",
+      "Review the complexity of functions and aim to reduce it. Functions with a complexity score above 3 should be simplified or split into smaller functions."
+    ],
+    "test_strategy_suggestions": [
+      "Implement a test-driven development (TDD) approach for new features to ensure tests are written before code.",
+      "Adopt a continuous integration (CI) pipeline that runs tests automatically on every commit to catch issues early.",
+      "Regularly review and update the test suite to ensure it remains relevant and effective as the codebase evolves."
+    ],
+    "next_steps": [
+      "Identify and document the specific lines and functions that are not covered by tests.",
+      "Create a plan to write unit tests for uncovered code, focusing on edge cases and error conditions.",
+      "Address the lint issues and refactor the code for better structure and readability.",
+      "Run mutation tests to identify weak spots and create targeted tests to improve the mutation score.",
+      "Set up a CI pipeline to automate testing and ensure ongoing code quality."
+    ]
+  },
+  "llm_supervisor_metadata": {
+    "entropy": 0.5371005070250509,
+    "avg_logprob": -0.3722897021217315,
+    "token_count": 501,
+    "input_tokens": 397,
+    "output_tokens": 501,
+    "estimated_cost": 0.00036015
+  }
+}

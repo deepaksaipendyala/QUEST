@@ -1,0 +1,23 @@
+{
+  "compile_error": false,
+  "no_tests": false,
+  "low_coverage": true,
+  "low_mutation": true,
+  "mutation_score": 28.97,
+  "lint_issue_count": 0,
+  "lint_missing_tools": [
+    "pylint",
+    "mypy"
+  ],
+  "coverage_delta": 0.5524861878453038,
+  "mutation_delta": 0.0,
+  "no_progress": false,
+  "missing_lines": [],
+  "instructions": [
+    "Install lint/type tools (pylint, mypy) to improve diagnostics.",
+    "Increase test coverage with more assertions.",
+    "Improve mutation score from 28.97% toward 50.00%.",
+    "Reliability blockers: Coverage below target threshold.; Mutation score below target..",
+    "Address runner error reported: Success."
+  ]
+}
